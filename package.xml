@@ -18,6 +18,7 @@
   <exec_depend>cartogapher_ros</exec_depend>
   <exec_depend>joy_driver</exec_depend>
   <exec_depend>teleop_twist_joy</exec_depend>
+  <exec_depend>nav2_bringup</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

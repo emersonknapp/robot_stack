@@ -16,9 +16,11 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-import launch.actions
+from launch.actions import DeclareLaunchArgument
+from launch.actions import ExecuteProcess
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
@@ -35,9 +37,11 @@ def generate_launch_description():
     description_repo_path = os.path.join(neato_share_dir, '..')
 
     return LaunchDescription([
-        launch.actions.ExecuteProcess(
+        DeclareLaunchArgument(
+            'slam', default_value='true'),
+        ExecuteProcess(
             cmd=[
-                'gzserver', '--verbose', world,
+                'gazebo', '--verbose', world,
                 '-s', 'libgazebo_ros_init.so',
                 '-s', 'libgazebo_ros_factory.so',
             ],
@@ -58,7 +62,7 @@ def generate_launch_description():
                 'base_driver': 'false',
                 'viz': 'true',
                 'use_sim_time': 'true',
-                'slam': 'true',
+                'slam': LaunchConfiguration('slam'),
             }.items(),
-        )
+        ),
     ])
