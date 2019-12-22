@@ -12,12 +12,21 @@
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
+  <!-- For using the Neato Botvac mobile base -->
   <exec_depend>neato_botvac</exec_depend>
   <exec_depend>neato_description</exec_depend>
   <exec_depend>neato_gazebo</exec_depend>
-  <exec_depend>cartogapher_ros</exec_depend>
+
+  <!-- For using the Kobuki mobile base -->
+  <exec_depend>hls_lfcd_lds_driver</exec_depend>
+  <exec_depend>turtlebot2_drivers</exec_depend>
+
+  <!-- Common IO drivers -->
   <exec_depend>joy_driver</exec_depend>
+
+  <!-- Brains Stack -->
   <exec_depend>teleop_twist_joy</exec_depend>
+  <exec_depend>cartogapher_ros</exec_depend>
   <exec_depend>nav2_bringup</exec_depend>
 
   <export>

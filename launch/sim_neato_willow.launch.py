@@ -29,7 +29,7 @@ def generate_launch_description():
         'launch', 'robot.launch.py')
     stack_launch_path = os.path.join(
         get_package_share_directory('robot_stack'),
-        'launch', 'neato_stack.launch.py')
+        'launch', 'robot_stack.launch.py')
 
     neato_gazebo_share_dir = get_package_share_directory('neato_gazebo')
     world = os.path.join(neato_gazebo_share_dir, 'worlds', 'neato_test.world')
@@ -59,10 +59,12 @@ def generate_launch_description():
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(stack_launch_path),
             launch_arguments={
+                'base_model': 'neato',
                 'base_driver': 'false',
                 'viz': 'true',
                 'use_sim_time': 'true',
                 'slam': LaunchConfiguration('slam'),
+                'nav': 'true',
             }.items(),
         ),
     ])
