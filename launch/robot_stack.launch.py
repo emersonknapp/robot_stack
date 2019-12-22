@@ -42,6 +42,9 @@ def generate_launch_description():
     neato_description_launch_path = os.path.join(
         get_package_share_directory('neato_description'),
         'launch', 'description.launch.py')
+    laser_launch_path = os.path.join(
+        get_package_share_directory('hls_lfcd_lds_driver'),
+        'launch', 'hlds_laser.launch.py')
 
     is_neato_base = IfEqualsCondition('base_model', 'neato')
     is_kobuki_base = IfEqualsCondition('base_model', 'kobuki')
@@ -75,10 +78,21 @@ def generate_launch_description():
         ),
         GroupAction(
             [
-                IncludeLaunchDescription(
-                    PythonLaunchDescriptionSource(kobuki_launch_path),
-                    launch_arguments={'use_sim_time': LaunchConfiguration('use_sim_time')}.items(),
-                    # condition=use_base_driver,
+                # IncludeLaunchDescription(
+                #     PythonLaunchDescriptionSource(laser_launch_path),
+                #     launch_arguments={
+                #         'port': '/dev/ttyUSB0',
+                #         'frame_id': 'laser',
+                #         'use_sim_time': LaunchConfiguration('use_sim_time')
+                #     }.items(),
+                #     condition=use_base_driver,
+                # ),
+                Node(
+                    package='turtlebot2_drivers',
+                    node_executable='kobuki_node',
+                    # node_name='kobuki_base',
+                    output='screen',
+                    condition=use_base_driver,
                 ),
             ],
             condition=is_kobuki_base,
