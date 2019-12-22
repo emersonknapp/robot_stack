@@ -49,6 +49,8 @@ def generate_launch_description():
     is_neato_base = IfEqualsCondition('base_model', 'neato')
     is_kobuki_base = IfEqualsCondition('base_model', 'kobuki')
     use_base_driver = IfCondition(LaunchConfiguration('base_driver'))
+    standard_params = {'use_sim_time': LaunchConfiguration('use_sim_time')}
+    standard_arguments = standard_params.items()
 
     return LaunchDescription([
         DeclareLaunchArgument('base_model'),
@@ -66,33 +68,33 @@ def generate_launch_description():
                     node_executable='neato',
                     node_name='neato_base',
                     output='screen',
-                    parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
+                    parameters=[standard_params],
                     condition=use_base_driver,
                 ),
                 IncludeLaunchDescription(
                     PythonLaunchDescriptionSource(neato_description_launch_path),
-                    launch_arguments={'use_sim_time': LaunchConfiguration('use_sim_time')}.items(),
+                    launch_arguments=standard_arguments,
                 ),
             ],
             condition=is_neato_base,
         ),
         GroupAction(
             [
-                # IncludeLaunchDescription(
-                #     PythonLaunchDescriptionSource(laser_launch_path),
-                #     launch_arguments={
-                #         'port': '/dev/ttyUSB0',
-                #         'frame_id': 'laser',
-                #         'use_sim_time': LaunchConfiguration('use_sim_time')
-                #     }.items(),
-                #     condition=use_base_driver,
-                # ),
+                IncludeLaunchDescription(
+                    PythonLaunchDescriptionSource(laser_launch_path),
+                    launch_arguments=dict({
+                        'port': '/dev/lds01',
+                        'frame_id': 'laser',
+                    }, **standard_params).items(),
+                    condition=use_base_driver,
+                ),
                 Node(
                     package='turtlebot2_drivers',
                     node_executable='kobuki_node',
-                    # node_name='kobuki_base',
-                    output='screen',
+                    node_name='kobuki_base',
+                    parameters=[standard_params],
                     condition=use_base_driver,
+                    output='screen',
                 ),
             ],
             condition=is_kobuki_base,
@@ -103,7 +105,7 @@ def generate_launch_description():
             package='joy',
             node_executable='joy_node',
             node_name='joy_driver',
-            parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
+            parameters=[standard_params],
             output='screen',
         ),
         Node(
@@ -112,7 +114,7 @@ def generate_launch_description():
             node_name='joy_interpreter',
             parameters=[
                 teleop_params_file,
-                {'use_sim_time': LaunchConfiguration('use_sim_time')},
+                standard_params,
             ],
             output='screen',
         ),
@@ -120,14 +122,14 @@ def generate_launch_description():
         # Mapping
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(cartographer_launch_path),
-            launch_arguments={'use_sim_time': LaunchConfiguration('use_sim_time')}.items(),
+            launch_arguments=standard_arguments,
             condition=IfCondition(LaunchConfiguration('slam'))
         ),
 
         # Navigation
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(nav_launch_path),
-            launch_arguments={'use_sim_time': LaunchConfiguration('use_sim_time')}.items(),
+            launch_arguments=standard_arguments,
             condition=IfCondition(LaunchConfiguration('nav')),
         ),
 
@@ -138,7 +140,7 @@ def generate_launch_description():
             node_name='rviz2',
             arguments=['-d', rviz_config_path],
             output='screen',
-            parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
+            parameters=[standard_params],
             condition=IfCondition(LaunchConfiguration('viz')),
         ),
     ])
