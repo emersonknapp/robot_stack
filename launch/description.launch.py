@@ -27,7 +27,7 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time', default_value='false'),
         DeclareLaunchArgument('publish_frequency', default_value='5.0'),
-        DeclareLaunchArgument('joint_states', default_value='true'),
+        DeclareLaunchArgument('joint_states', default_value='false'),
         Node(
             package='robot_state_publisher',
             node_executable='robot_state_publisher',
@@ -44,6 +44,9 @@ def generate_launch_description():
             name='joint_state_publisher',
             output='screen',
             arguments=[urdf_file.name],
+            parameters=[{
+                'use_sim_time': LaunchConfiguration('use_sim_time'),
+            }],
             condition=IfCondition(LaunchConfiguration('joint_states')),
         ),
     ])
