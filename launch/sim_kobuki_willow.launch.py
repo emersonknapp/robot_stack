@@ -44,9 +44,15 @@ def generate_launch_description():
         get_package_share_directory('neato_gazebo'),
         'worlds', 'neato_test.world')
 
-    base_share_dir = get_package_share_directory('kobuki_description')
-    description_repo_path = os.path.join(base_share_dir, '..')
-    xacro_path = os.path.join(base_share_dir, 'urdf', 'kobuki_standalone.urdf.xacro')
+    model_path = ':'.join([
+        os.path.join(
+            get_package_share_directory('kobuki_description'), '..'),
+        os.path.join(
+            get_package_share_directory('turtlebot_description'), '..'),
+    ])
+    print(model_path)
+    xacro_path = os.path.join(
+        get_package_share_directory('robot_stack'), 'urdf', 'homey.urdf.xacro')
     urdf_file = render_xacro(xacro_path)
 
     return LaunchDescription([
@@ -59,7 +65,6 @@ def generate_launch_description():
             node_name='spawn_base',
             output='screen',
             arguments=['-file', urdf_file.name, '-entity', 'homey'],
-            parameters=[{'use_sim_time': 'true'}],
         ),
         ExecuteProcess(
             cmd=[
@@ -68,7 +73,7 @@ def generate_launch_description():
                 '-s', 'libgazebo_ros_factory.so',
             ],
             additional_env={
-                'GAZEBO_MODEL_PATH': [description_repo_path],
+                'GAZEBO_MODEL_PATH': [model_path],
             },
             output='screen',
         ),

@@ -42,7 +42,7 @@ def generate_launch_description():
         get_package_share_directory('neato_description'),
         'launch', 'description.launch.py')
     kobuki_description_launch_path = os.path.join(
-        get_package_share_directory('kobuki_description'),
+        get_package_share_directory('robot_stack'),
         'launch', 'description.launch.py')
     laser_launch_path = os.path.join(
         get_package_share_directory('hls_lfcd_lds_driver'),
