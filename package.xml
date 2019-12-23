@@ -20,11 +20,12 @@
   <!-- For using the Kobuki mobile base -->
   <exec_depend>hls_lfcd_lds_driver</exec_depend>
   <exec_depend>turtlebot2_drivers</exec_depend>
+  <exec_depend>kobuki_description</exec_depend>
 
   <!-- Common IO drivers -->
   <exec_depend>joy_driver</exec_depend>
 
-  <!-- Brains Stack -->
+  <!-- Brains -->
   <exec_depend>teleop_twist_joy</exec_depend>
   <exec_depend>cartogapher_ros</exec_depend>
   <exec_depend>nav2_bringup</exec_depend>

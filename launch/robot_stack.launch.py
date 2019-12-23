@@ -36,11 +36,13 @@ def generate_launch_description():
     stack_share = get_package_share_directory('robot_stack')
     rviz_config_path = os.path.join(stack_share, 'config', 'homey.rviz')
     teleop_params_file = os.path.join(stack_share, 'config', 'teleop_xbox.config.yaml')
-    kobuki_launch_path = os.path.join(stack_share, 'launch', 'kobuki_base.launch.py')
     cartographer_launch_path = os.path.join(stack_share, 'launch', 'cartographer.launch.py')
     nav_launch_path = os.path.join(stack_share, 'launch', 'nav.launch.py')
     neato_description_launch_path = os.path.join(
         get_package_share_directory('neato_description'),
+        'launch', 'description.launch.py')
+    kobuki_description_launch_path = os.path.join(
+        get_package_share_directory('kobuki_description'),
         'launch', 'description.launch.py')
     laser_launch_path = os.path.join(
         get_package_share_directory('hls_lfcd_lds_driver'),
@@ -61,6 +63,7 @@ def generate_launch_description():
         DeclareLaunchArgument('use_sim_time', default_value='false'),
 
         # Base
+        # -- Neato Base
         GroupAction(
             [
                 Node(
@@ -78,6 +81,7 @@ def generate_launch_description():
             ],
             condition=is_neato_base,
         ),
+        # -- Kobuki Base
         GroupAction(
             [
                 IncludeLaunchDescription(
@@ -95,6 +99,10 @@ def generate_launch_description():
                     parameters=[standard_params],
                     condition=use_base_driver,
                     output='screen',
+                ),
+                IncludeLaunchDescription(
+                        PythonLaunchDescriptionSource(kobuki_description_launch_path),
+                        launch_arguments=standard_arguments,
                 ),
             ],
             condition=is_kobuki_base,
