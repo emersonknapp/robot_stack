@@ -35,6 +35,10 @@ def render_xacro(xacro_path):
     return urdf_file
 
 
+def get_package_install_directory(package_name):
+    return os.path.join(get_package_share_directory(package_name), '..')
+
+
 def generate_launch_description():
     stack_launch_path = os.path.join(
         get_package_share_directory('robot_stack'),
@@ -45,10 +49,12 @@ def generate_launch_description():
         'worlds', 'neato_test.world')
 
     model_path = ':'.join([
-        os.path.join(
-            get_package_share_directory('kobuki_description'), '..'),
-        os.path.join(
-            get_package_share_directory('turtlebot_description'), '..'),
+        # for misc sensors
+        get_package_install_directory('robot_stack'),
+        # for kobuki mobile base
+        get_package_install_directory('kobuki_description'),
+        # for stacked plates
+        get_package_install_directory('turtlebot_description'),
     ])
     print(model_path)
     xacro_path = os.path.join(
