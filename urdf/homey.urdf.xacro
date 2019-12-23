@@ -7,13 +7,13 @@
   <xacro:kobuki/>
   <xacro:stack_hexagons parent="base_link"/>
 
-  <joint name="scan_joint" type="fixed">
+  <joint name="laser_joint" type="fixed">
     <parent link="base_link"/>
-    <child link="base_scan"/>
+    <child link="laser_link"/>
     <origin xyz="0.05 0 0.221" rpy="0 0 3.14"/>
   </joint>
 
-  <link name="base_scan">
+  <link name="laser_link">
     <visual>
       <origin xyz="0 0 0.0" rpy="0 0 0"/>
       <geometry>
@@ -35,4 +35,40 @@
       <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
     </inertial>
   </link>
+
+  <gazebo reference="laser_link">
+    <sensor type="ray" name="laser">
+      <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <argument>~/out:=scan</argument>
+        </ros>
+        <output_type>sensor_msgs/LaserScan</output_type>
+        <frame_name>laser_link</frame_name>
+      </plugin>
+
+      <always_on>true</always_on>
+      <update_rate>5</update_rate>
+      <visualize>true</visualize>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1</resolution>
+            <min_angle>${-M_PI}</min_angle>
+            <max_angle>${M_PI}</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.2</min>
+          <max>5</max>
+          <resolution>1</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.0</stddev>
+        </noise>
+      </ray>
+    </sensor>
+  </gazebo>
 </robot>
