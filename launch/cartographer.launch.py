@@ -32,8 +32,7 @@ def generate_launch_description():
             'configuration_basename',
             default_value='neato_lds_2d.lua',
             description='Name of lua file for cartographer'),
-        DeclareLaunchArgument('use_sim_time', default_value='true'),
-
+        DeclareLaunchArgument('use_sim_time', default_value='false'),
         Node(
             package='cartographer_ros',
             node_executable='cartographer_node',
