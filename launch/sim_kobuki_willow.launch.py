@@ -65,6 +65,7 @@ def generate_launch_description():
         DeclareLaunchArgument('slam', default_value='true'),
         DeclareLaunchArgument('nav', default_value='false'),
         DeclareLaunchArgument('base', default_value='kobuki'),
+        DeclareLaunchArgument('viz', default_value='true'),
         Node(
             package='gazebo_ros',
             node_executable='spawn_entity.py',
@@ -86,9 +87,9 @@ def generate_launch_description():
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(stack_launch_path),
             launch_arguments={
-                'base_model': 'kobuki',
+                'base_model': LaunchConfiguration('base'),
                 'base_driver': 'false',
-                'viz': 'true',
+                'viz': LaunchConfiguration('viz'),
                 'use_sim_time': 'true',
                 'slam': LaunchConfiguration('slam'),
                 'nav': LaunchConfiguration('nav'),
