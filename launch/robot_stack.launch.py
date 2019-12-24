@@ -88,7 +88,7 @@ def generate_launch_description():
                     PythonLaunchDescriptionSource(laser_launch_path),
                     launch_arguments=dict({
                         'port': '/dev/lds01',
-                        'frame_id': 'laser',
+                        'frame_id': 'laser_link',
                     }, **standard_params).items(),
                     condition=use_base_driver,
                 ),
@@ -102,7 +102,10 @@ def generate_launch_description():
                 ),
                 IncludeLaunchDescription(
                         PythonLaunchDescriptionSource(kobuki_description_launch_path),
-                        launch_arguments=standard_arguments,
+                        launch_arguments={
+                            **standard_params,
+                            'joint_states': LaunchConfiguration('base_driver')
+                        }.items(),
                 ),
             ],
             condition=is_kobuki_base,
