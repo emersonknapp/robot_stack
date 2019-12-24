@@ -133,7 +133,10 @@ def generate_launch_description():
         # Mapping
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(cartographer_launch_path),
-            launch_arguments=standard_arguments,
+            launch_arguments={
+                **standard_params,
+                'configuration_basename': 'kobuki_lds_2d.lua',
+            }.items(),
             condition=IfCondition(LaunchConfiguration('slam'))
         ),
 
