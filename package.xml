@@ -28,7 +28,7 @@
 
   <!-- Brains -->
   <exec_depend>teleop_twist_joy</exec_depend>
-  <exec_depend>cartogapher_ros</exec_depend>
+  <exec_depend>cartographer_ros</exec_depend>
   <exec_depend>nav2_bringup</exec_depend>
 
   <!-- Visualization -->
