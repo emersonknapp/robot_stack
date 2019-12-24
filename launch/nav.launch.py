@@ -17,8 +17,10 @@ from pathlib import Path
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 
@@ -29,14 +31,16 @@ def generate_launch_description():
 
     map_path = os.path.join(
         get_package_share_directory('robot_stack'), 'maps', 'willow-partial0.yaml')
+    use_sim_time = LaunchConfiguration('use_sim_time')
 
     return LaunchDescription([
+        DeclareLaunchArgument('use_sim_time', default_value='false'),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(str(nav2_loco)),
             launch_arguments={
                 'namespace': '',
                 'map': map_path,
-                'use_sim_time': 'true',
+                'use_sim_time': use_sim_time,
                 'params_file': str(nav2_bringup_dir / 'params' / 'nav2_params.yaml'),
                 'use_lifecycle_mgr': 'false',
                 'use_remappings': 'false',
@@ -46,7 +50,7 @@ def generate_launch_description():
             PythonLaunchDescriptionSource(str(nav2_nav)),
             launch_arguments={
                 'namespace': '',
-                'use_sim_time': 'true',
+                'use_sim_time': use_sim_time,
                 'params_file': str(nav2_bringup_dir / 'params' / 'nav2_params.yaml'),
                 'use_lifecycle_mgr': 'false',
                 'use_remappings': 'false',
@@ -59,7 +63,7 @@ def generate_launch_description():
             node_name='lifecycle_manager',
             output='screen',
             parameters=[
-                {'use_sim_time': True},
+                {'use_sim_time': use_sim_time},
                 {'autostart': True},
                 {'node_names': [
                     'map_server',
