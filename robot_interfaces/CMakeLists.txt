@@ -19,10 +19,11 @@ find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(geometry_msgs REQUIRED)
 
-file(GLOB ${PROJECT_NAME}_srvs "srv/*")
-
 rosidl_generate_interfaces(${PROJECT_NAME}
-  ${PROJECT_NAME}_srvs
+  "srv/AddParkingSpot.srv"
+  "srv/DeleteParkingSpot.srv"
+  "srv/GetParkingSpot.srv"
+  "srv/RenameParkingSpot.srv"
   DEPENDENCIES geometry_msgs
   ADD_LINTER_TESTS
 )

@@ -28,24 +28,32 @@ ParkingSpotTool::ParkingSpotTool()
   shortcut_key_ = 'p';
 }
 
-ParkingSpotTool::~ParkingSpotTool()
-{
-
-}
+ParkingSpotTool::~ParkingSpotTool() = default;
 
 void ParkingSpotTool::onInitialize()
 {
   PoseTool::onInitialize();
   setName("Parking Spot");
   setIcon(rviz_common::loadPixmap("package://rviz_default_plugins/icons/classes/SetGoal.png"));
+  add_client_ = context_->getRosNodeAbstraction().lock()->get_raw_node()->
+    template create_client<robot_interfaces::srv::AddParkingSpot>("add_parking_spot");
 }
 
 void
 ParkingSpotTool::onPoseSet(double x, double y, double theta)
 {
-  printf("Poop %f %f %f\n", x, y, theta);
-  // Set goal pose on global object GoalUpdater to update nav2 Panel
-  // GoalUpdater.setGoal(x, y, theta, context_->getFixedFrame());
+  auto request = std::make_shared<robot_interfaces::srv::AddParkingSpot::Request>();
+  request->pose.x = x;
+  request->pose.y = y;
+  request->pose.theta = theta;
+  printf("Sending %f %f %f\n", x, y, theta);
+  using ServiceResponseFuture =
+    rclcpp::Client<robot_interfaces::srv::AddParkingSpot>::SharedFuture;
+  auto response_received_callback = [this](ServiceResponseFuture future) {
+      auto result = future.get();
+      printf("Result of adding: %d\n", result->success);
+    };
+  auto future_result = add_client_->async_send_request(request, response_received_callback);
 }
 
 }  // namespace parking_rviz_plugins

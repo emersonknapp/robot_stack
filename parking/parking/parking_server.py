@@ -65,6 +65,7 @@ class ParkingSpotServer(Node):
         print(fb)
 
     def add_spot(self, request, response):
+        print(request)
         name = 'park{:02}'.format(len(self.spots))
         self.spots[name] = request.pose
         response.success = True

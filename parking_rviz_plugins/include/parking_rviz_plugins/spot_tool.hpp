@@ -21,6 +21,8 @@
 
 #include "rviz_default_plugins/tools/pose/pose_tool.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
+#include "rclcpp/rclcpp.hpp"
+#include "robot_interfaces/srv/add_parking_spot.hpp"
 
 namespace rviz_common
 {
@@ -48,6 +50,9 @@ public:
 
 protected:
   void onPoseSet(double x, double y, double theta) override;
+
+private:
+  rclcpp::Client<robot_interfaces::srv::AddParkingSpot>::SharedPtr add_client_;
 };
 
 }  // namespace parking_rviz_plugins

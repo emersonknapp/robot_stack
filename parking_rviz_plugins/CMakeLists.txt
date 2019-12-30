@@ -25,6 +25,7 @@ find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Test Concurrent)
 find_package(rclcpp REQUIRED)
 find_package(rviz_common REQUIRED)
 find_package(rviz_default_plugins REQUIRED)
+find_package(robot_interfaces REQUIRED)
 
 include_directories(include)
 
@@ -38,6 +39,7 @@ ament_target_dependencies(${PROJECT_NAME}
   pluginlib
   Qt5
   rclcpp
+  robot_interfaces
   rviz_common
   rviz_default_plugins
 )
@@ -77,6 +79,7 @@ ament_export_interfaces(${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_dependencies(
   geometry_msgs
   Qt5
+  robot_interfaces
   rclcpp
   rviz_common
 )
