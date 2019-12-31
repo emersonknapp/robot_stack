@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import math
+from math import cos, sin
 
 from geometry_msgs.msg import Point
 from geometry_msgs.msg import Pose
@@ -21,26 +21,25 @@ from visualization_msgs.msg import Marker
 
 # TODO(e) definitely have to make/find a linalg/utils library
 def quaternion_from_euler(roll: float, pitch: float, yaw: float) -> Quaternion:
-    cy = math.cos(yaw * 0.5)
-    sy = math.sin(yaw * 0.5)
-    cp = math.cos(pitch * 0.5)
-    sp = math.sin(pitch * 0.5)
-    cr = math.cos(roll * 0.5)
-    sr = math.sin(roll * 0.5)
+    cy = cos(yaw * 0.5)
+    sy = sin(yaw * 0.5)
+    cp = cos(pitch * 0.5)
+    sp = sin(pitch * 0.5)
+    cr = cos(roll * 0.5)
+    sr = sin(roll * 0.5)
 
-    q = Quaternion()
-    q.x = cy * cp * cr + sy * sp * sr
-    q.y = cy * cp * sr - sy * sp * cr
-    q.z = sy * cp * sr + cy * sp * cr
-    q.w = sy * cp * cr - cy * sp * sr
-
-    return q
+    return Quaternion(
+        x=cy * cp * cr + sy * sp * sr,
+        y=cy * cp * sr - sy * sp * cr,
+        z=sy * cp * sr + cy * sp * cr,
+        w=sy * cp * cr - cy * sp * sr)
 
 
 class ParkingSpotServer(Node):
     def __init__(self):
         super(ParkingSpotServer, self).__init__('parking_spot_server')
-        self.spots = {}
+        self.markers = {}
+        self.poses = {}
         self.marker_server = InteractiveMarkerServer(self, 'parking')
         # self.add_marker('test', Pose2D(x=1.1, y=0.5, theta=1.0))
 
@@ -109,17 +108,23 @@ class ParkingSpotServer(Node):
 
     def add_spot(self, request, response):
         print(request)
-        name = 'park{:02}'.format(len(self.spots) + 1)
-        if name not in self.spots:
-            marker = self.add_marker(name, request.pose)
-            # self.spots[name] = marker
-        self.spots[name] = request.pose
+        name = 'park{:02}'.format(len(self.poses) + 1)
+        if name in self.poses:
+            response.success = False
+            return response
+
+        marker = self.add_marker(name, request.pose)
+        self.poses[name] = request.pose
+        self.markers[name] = marker
         response.success = True
         return response
 
     def delete_spot(self, request, response):
         try:
-            del self.spots[request.name]
+            del self.poses[request.name]
+            self.marker_server.erase(request.name)
+            self.marker_server.applyChanges()
+            del self.markers[request.name]
             response.success = True
         except KeyError:
             response.success = False
@@ -127,24 +132,29 @@ class ParkingSpotServer(Node):
 
     def get_spot(self, request, response):
         try:
-            response.pose = self.spots[request.name]
+            response.pose = self.poses[request.name]
             response.success = True
         except KeyError:
             response.success = False
         return response
 
     def rename_spot(self, request, response):
-        if request.name not in self.spots:
+        if request.name not in self.poses:
             response.success = False
             response.msg = 'Spot does not exist'
-        elif request.new_name in self.spots:
+        elif request.new_name in self.poses:
             response.success = False
             response.msg = 'New name already taken'
         else:
             response.success = True
-            spot = self.spots[request.name]
-            del self.spots[request.name]
-            self.spots[request.new_name] = spot
+            name = request.name
+            pose = self.poses[name]
+            del self.markers[name]
+            del self.poses[name]
+            self.poses[request.new_name] = pose
+            self.marker_server.erase(name)
+            marker = self.add_marker(request.new_name, pose)
+            self.markers[request.new_name] = marker
         return response
 
 
