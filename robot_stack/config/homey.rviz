@@ -8,15 +8,18 @@ Panels:
         - /Status1
         - /LaserScan1/Topic1
         - /Odometry1/Shape1
+        - /Map1
         - /Map1/Topic1
         - /Navigation1
         - /Navigation1/Amcl Particles1/Topic1
+        - /ParkingSpots1
       Splitter Ratio: 0.5
     Tree Height: 1198
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
-    Expanded: ~
+    Expanded:
+      - /Interact1
     Name: Tool Properties
     Splitter Ratio: 0.5886790156364441
   - Class: rviz_common/Views
@@ -464,7 +467,7 @@ Visualization Manager:
         Reliability Policy: Best Effort
         Value: /imu
       Value: true
-    - Alpha: 1
+    - Alpha: 0.6000000238418579
       Class: rviz_default_plugins/Map
       Color Scheme: map
       Draw Behind: true
@@ -584,6 +587,15 @@ Visualization Manager:
           Value: true
       Enabled: true
       Name: Navigation
+    - Class: rviz_default_plugins/InteractiveMarkers
+      Enable Transparency: true
+      Enabled: true
+      Interactive Markers Namespace: /parking
+      Name: ParkingSpots
+      Show Axes: true
+      Show Descriptions: true
+      Show Visual Aids: true
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -592,10 +604,7 @@ Visualization Manager:
   Name: root
   Tools:
     - Class: rviz_default_plugins/MoveCamera
-    - Class: rviz_default_plugins/Select
     - Class: rviz_default_plugins/FocusCamera
-    - Class: rviz_default_plugins/Measure
-      Line color: 128; 128; 0
     - Class: rviz_default_plugins/SetInitialPose
       Topic:
         Depth: 5
@@ -604,6 +613,9 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /initialpose
     - Class: nav2_rviz_plugins/GoalTool
+    - Class: rviz_default_plugins/Interact
+      Hide Inactive Objects: true
+    - Class: parking_rviz_plugins/ParkingSpotTool
   Transformation:
     Current:
       Class: rviz_default_plugins/TF
@@ -620,7 +632,7 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Scale: 78.16950225830078
+      Scale: 129.10275268554688
       Target Frame: base_link
       Value: TopDownOrtho (rviz_default_plugins)
       X: 1.4578416347503662

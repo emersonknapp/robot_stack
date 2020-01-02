@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import os
 from pathlib import Path
 
 from ament_index_python.packages import get_package_share_directory
@@ -28,18 +27,16 @@ def generate_launch_description():
     nav2_bringup_dir = Path(get_package_share_directory('nav2_bringup'))
     nav2_loco = nav2_bringup_dir / 'launch' / 'nav2_localization_launch.py'
     nav2_nav = nav2_bringup_dir / 'launch' / 'nav2_navigation_launch.py'
-
-    map_path = os.path.join(
-        get_package_share_directory('robot_stack'), 'maps', 'willow-partial0.yaml')
     use_sim_time = LaunchConfiguration('use_sim_time')
 
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time', default_value='false'),
+        DeclareLaunchArgument('map'),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(str(nav2_loco)),
             launch_arguments={
                 'namespace': '',
-                'map': map_path,
+                'map': LaunchConfiguration('map'),
                 'use_sim_time': use_sim_time,
                 'params_file': str(nav2_bringup_dir / 'params' / 'nav2_params.yaml'),
                 'use_lifecycle_mgr': 'false',

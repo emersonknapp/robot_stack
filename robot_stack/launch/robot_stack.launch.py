@@ -38,19 +38,22 @@ def generate_launch_description():
     teleop_params_file = os.path.join(stack_share, 'config', 'teleop_xbox.config.yaml')
     cartographer_launch_path = os.path.join(stack_share, 'launch', 'cartographer.launch.py')
     nav_launch_path = os.path.join(stack_share, 'launch', 'nav.launch.py')
+    kobuki_description_launch_path = os.path.join(stack_share, 'launch', 'description.launch.py')
+    map_path = os.path.join(stack_share, 'maps', 'willow-partial0.yaml')
     neato_description_launch_path = os.path.join(
         get_package_share_directory('neato_description'),
-        'launch', 'description.launch.py')
-    kobuki_description_launch_path = os.path.join(
-        get_package_share_directory('robot_stack'),
         'launch', 'description.launch.py')
     laser_launch_path = os.path.join(
         get_package_share_directory('hls_lfcd_lds_driver'),
         'launch', 'hlds_laser.launch.py')
+    parking_launch_path = os.path.join(
+        get_package_share_directory('parking'),
+        'launch', 'parking.launch.py')
 
     is_neato_base = IfEqualsCondition('base_model', 'neato')
     is_kobuki_base = IfEqualsCondition('base_model', 'kobuki')
     use_base_driver = IfCondition(LaunchConfiguration('base_driver'))
+    use_sim_time = LaunchConfiguration('use_sim_time')
     standard_params = {'use_sim_time': LaunchConfiguration('use_sim_time')}
     standard_arguments = standard_params.items()
 
@@ -141,9 +144,23 @@ def generate_launch_description():
         ),
 
         # Navigation
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(nav_launch_path),
-            launch_arguments=standard_arguments,
+        GroupAction(
+            [
+                IncludeLaunchDescription(
+                    PythonLaunchDescriptionSource(nav_launch_path),
+                    launch_arguments={
+                        'use_sim_time': use_sim_time,
+                        'map': map_path,
+                    }.items(),
+                ),
+                IncludeLaunchDescription(
+                    PythonLaunchDescriptionSource(parking_launch_path),
+                    launch_arguments={
+                        'use_sim_time': use_sim_time,
+                        'map': map_path,
+                    }.items(),
+                ),
+            ],
             condition=IfCondition(LaunchConfiguration('nav')),
         ),
 

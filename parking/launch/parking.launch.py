@@ -21,7 +21,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time', default_value='false'),
-        DeclareLaunchArgument('map_yaml'),
+        DeclareLaunchArgument('map'),
         Node(
             package='parking',
             node_executable='parking_server',
@@ -30,7 +30,7 @@ def generate_launch_description():
             parameters=[
                 {
                     'use_sim_time': LaunchConfiguration('use_sim_time'),
-                    'map_yaml': LaunchConfiguration('map_yaml')
+                    'map_yaml': LaunchConfiguration('map'),
                 },
             ]
         ),
