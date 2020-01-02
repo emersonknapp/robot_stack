@@ -1,0 +1,9 @@
+<library path="parking_rviz_plugins">
+
+  <class name="parking_rviz_plugins/ParkingSpotTool"
+         type="parking_rviz_plugins::ParkingSpotTool"
+         base_class_type="rviz_common::Tool">
+    <description>A tool used to create a new parking spot.</description>
+  </class>
+
+</library>
