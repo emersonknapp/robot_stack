@@ -20,6 +20,8 @@ from visualization_msgs.msg import InteractiveMarkerControl
 from visualization_msgs.msg import Marker
 import yaml
 
+from .transformations import euler_from_quaternion
+
 
 # TODO(e) definitely have to make/find a linalg/utils library
 def quaternion_from_euler(roll: float, pitch: float, yaw: float) -> Quaternion:
@@ -48,6 +50,7 @@ class ParkingSpotServer(Node):
         map_param = self.get_parameter('map_yaml').value
         self.map_path = Path(map_param)
         self.load_map()
+        self.name_counter = 0
 
         self.add_srv = self.create_service(
             AddParkingSpot, 'add_parking_spot', self.add_spot)
@@ -59,10 +62,19 @@ class ParkingSpotServer(Node):
             RenameParkingSpot, 'rename_parking_spot', self.rename_spot)
 
     def save_map(self):
-        self.map_data['parking'] = {
-            name: [pose.x, pose.y, pose.theta]
-            for name, pose in self.poses.items()
-        }
+        dump = {}
+        for name, marker in self.markers.items():
+            pose = marker.pose
+            euler = euler_from_quaternion([
+                pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w])
+            yaw = euler[2]
+            dump[name] = [
+                pose.position.x,
+                pose.position.y,
+                yaw,
+            ]
+        self.map_data['parking'] = dump
+
         with self.map_path.open('w') as map_yaml:
             yaml.dump(self.map_data, map_yaml)
 
@@ -135,10 +147,10 @@ class ParkingSpotServer(Node):
 
     def add_spot(self, request, response):
         print(request)
-        name = 'park{:02}'.format(len(self.poses) + 1)
-        if name in self.poses:
-            response.success = False
-            return response
+        name = 'park{:02}'.format(self.name_counter)
+        while name in self.poses:
+            self.name_counter += 1
+            name = 'park{:02}'.format(self.name_counter)
 
         marker = self.add_marker(name, request.pose)
         self.poses[name] = request.pose
