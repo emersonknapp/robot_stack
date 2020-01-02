@@ -17,6 +17,7 @@ from robot_interfaces.srv import RenameParkingSpot
 from std_msgs.msg import ColorRGBA
 from visualization_msgs.msg import InteractiveMarker
 from visualization_msgs.msg import InteractiveMarkerControl
+from visualization_msgs.msg import InteractiveMarkerFeedback
 from visualization_msgs.msg import Marker
 import yaml
 
@@ -51,6 +52,10 @@ class ParkingSpotServer(Node):
         self.map_path = Path(map_param)
         self.load_map()
         self.name_counter = 0
+        # Create a timeout to throttle saving data on feedback
+        # We reset it on marker feedback so that once the user stops editing, save is triggered
+        self.save_timer = self.create_timer(0.1, self.save_map)
+        self.save_timer.cancel()
 
         self.add_srv = self.create_service(
             AddParkingSpot, 'add_parking_spot', self.add_spot)
@@ -62,6 +67,7 @@ class ParkingSpotServer(Node):
             RenameParkingSpot, 'rename_parking_spot', self.rename_spot)
 
     def save_map(self):
+        self.save_timer.cancel()
         dump = {}
         for name, marker in self.markers.items():
             pose = marker.pose
@@ -90,9 +96,8 @@ class ParkingSpotServer(Node):
             for name, pose in self.map_data.get('parking', {}).items()
         }
 
-    def box_feedback(self, fb) -> None:
-        # TODO(e) save on finished move feedback
-        print(fb)
+    def marker_feedback(self, event: InteractiveMarkerFeedback) -> None:
+        self.save_timer.reset()
 
     def add_marker(self, name: str, pose: Pose2D) -> InteractiveMarker:
         marker = InteractiveMarker(
@@ -141,7 +146,7 @@ class ParkingSpotServer(Node):
                 orientation=Quaternion(x=0., y=0.7068252, z=0., w=0.7068252),
             )
         ]
-        self.marker_server.insert(marker, feedback_callback=self.box_feedback)
+        self.marker_server.insert(marker, feedback_callback=self.marker_feedback)
         self.marker_server.applyChanges()
         return marker
 
