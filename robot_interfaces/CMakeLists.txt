@@ -20,11 +20,12 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(geometry_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
+  "action/NavigateToParkingSpot.action"
   "srv/AddParkingSpot.srv"
   "srv/DeleteParkingSpot.srv"
   "srv/GetParkingSpot.srv"
   "srv/RenameParkingSpot.srv"
-  DEPENDENCIES geometry_msgs
+  DEPENDENCIES geometry_msgs action_msgs
   ADD_LINTER_TESTS
 )
 

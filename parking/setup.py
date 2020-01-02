@@ -25,7 +25,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'parking_server=parking.parking_server:main'
+            'parking_server=parking.parking_server:main',
+            'nav_server=parking.nav_server:main',
         ],
     },
 )
