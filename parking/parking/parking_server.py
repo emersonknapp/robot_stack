@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from math import cos, sin
+from pathlib import Path
 
 from geometry_msgs.msg import Point
 from geometry_msgs.msg import Pose
@@ -17,6 +18,7 @@ from std_msgs.msg import ColorRGBA
 from visualization_msgs.msg import InteractiveMarker
 from visualization_msgs.msg import InteractiveMarkerControl
 from visualization_msgs.msg import Marker
+import yaml
 
 
 # TODO(e) definitely have to make/find a linalg/utils library
@@ -38,10 +40,14 @@ def quaternion_from_euler(roll: float, pitch: float, yaw: float) -> Quaternion:
 class ParkingSpotServer(Node):
     def __init__(self):
         super(ParkingSpotServer, self).__init__('parking_spot_server')
+        self.declare_parameter('map_yaml')
+
         self.markers = {}
         self.poses = {}
         self.marker_server = InteractiveMarkerServer(self, 'parking')
-        # self.add_marker('test', Pose2D(x=1.1, y=0.5, theta=1.0))
+        map_param = self.get_parameter('map_yaml').value
+        self.map_path = Path(map_param)
+        self.load_map()
 
         self.add_srv = self.create_service(
             AddParkingSpot, 'add_parking_spot', self.add_spot)
@@ -52,7 +58,28 @@ class ParkingSpotServer(Node):
         self.rename_srv = self.create_service(
             RenameParkingSpot, 'rename_parking_spot', self.rename_spot)
 
+    def save_map(self):
+        self.map_data['parking'] = {
+            name: [pose.x, pose.y, pose.theta]
+            for name, pose in self.poses.items()
+        }
+        with self.map_path.open('w') as map_yaml:
+            yaml.dump(self.map_data, map_yaml)
+
+    def load_map(self):
+        with self.map_path.open('r') as map_yaml:
+            self.map_data = yaml.safe_load(map_yaml)
+        self.poses = {
+            name: Pose2D(x=pose[0], y=pose[1], theta=pose[2])
+            for name, pose in self.map_data.get('parking', {}).items()
+        }
+        self.markers = {
+            name: self.add_marker(name, Pose2D(x=pose[0], y=pose[1], theta=pose[2]))
+            for name, pose in self.map_data.get('parking', {}).items()
+        }
+
     def box_feedback(self, fb) -> None:
+        # TODO(e) save on finished move feedback
         print(fb)
 
     def add_marker(self, name: str, pose: Pose2D) -> InteractiveMarker:
@@ -117,6 +144,7 @@ class ParkingSpotServer(Node):
         self.poses[name] = request.pose
         self.markers[name] = marker
         response.success = True
+        self.save_map()
         return response
 
     def delete_spot(self, request, response):
@@ -126,6 +154,7 @@ class ParkingSpotServer(Node):
             self.marker_server.applyChanges()
             del self.markers[request.name]
             response.success = True
+            self.save_map()
         except KeyError:
             response.success = False
         return response
@@ -155,6 +184,7 @@ class ParkingSpotServer(Node):
             self.marker_server.erase(name)
             marker = self.add_marker(request.new_name, pose)
             self.markers[request.new_name] = marker
+            self.save_map()
         return response
 
 
