@@ -34,4 +34,15 @@ def generate_launch_description():
                 },
             ]
         ),
+        Node(
+            package='parking',
+            node_executable='nav_server',
+            node_name='nav_to_parking_spot',
+            output='screen',
+            parameters=[
+                {
+                    'use_sim_time': LaunchConfiguration('use_sim_time'),
+                },
+            ]
+        )
     ])

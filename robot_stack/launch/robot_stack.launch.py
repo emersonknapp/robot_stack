@@ -144,23 +144,12 @@ def generate_launch_description():
         ),
 
         # Navigation
-        GroupAction(
-            [
-                IncludeLaunchDescription(
-                    PythonLaunchDescriptionSource(nav_launch_path),
-                    launch_arguments={
-                        'use_sim_time': use_sim_time,
-                        'map': map_path,
-                    }.items(),
-                ),
-                IncludeLaunchDescription(
-                    PythonLaunchDescriptionSource(parking_launch_path),
-                    launch_arguments={
-                        'use_sim_time': use_sim_time,
-                        'map': map_path,
-                    }.items(),
-                ),
-            ],
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(nav_launch_path),
+            launch_arguments={
+                'use_sim_time': use_sim_time,
+                'map': map_path,
+            }.items(),
             condition=IfCondition(LaunchConfiguration('nav')),
         ),
 
