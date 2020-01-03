@@ -1,4 +1,4 @@
-string spot
+string name
 ---
 std_msgs/Empty result
 ---
