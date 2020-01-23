@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>robot_stack</name>
+  <name>robot_runtime</name>
   <version>0.0.0</version>
-  <description>Top level bringup scripts and config for home robot project</description>
+  <description>On-robot component of the robot stack. No GUI dependencies!</description>
   <maintainer email="emerson.b.knapp@gmail.com">Emerson Knapp</maintainer>
   <license>Apache 2.0</license>
 
@@ -12,29 +12,18 @@
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
-  <!-- For using the Neato Botvac mobile base -->
-  <exec_depend>neato_botvac</exec_depend>
-  <exec_depend>neato_description</exec_depend>
-  <exec_depend>neato_gazebo</exec_depend>
-
-  <!-- For using the Kobuki mobile base -->
+  <!-- Kobuki Base -->
   <exec_depend>hls_lfcd_lds_driver</exec_depend>
   <exec_depend>turtlebot2_drivers</exec_depend>
   <exec_depend>kobuki_description</exec_depend>
   <exec_depend>turtlebot_description</exec_depend>
-
-  <!-- Common IO drivers -->
   <exec_depend>joy</exec_depend>
 
-  <!-- Brains -->
+  <!-- Not hardware specific -->
   <exec_depend>teleop_twist_joy</exec_depend>
   <exec_depend>cartographer_ros</exec_depend>
   <exec_depend>nav2_bringup</exec_depend>
   <exec_depend>parking</exec_depend>
-
-  <!-- Visualization -->
-  <exec_depend>rviz_plugin_tutorials</exec_depend>
-  <!-- <exec_depend>parking_rviz_plugins</exec_depend> -->
 
   <export>
     <build_type>ament_cmake</build_type>
