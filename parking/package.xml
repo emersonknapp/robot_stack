@@ -7,8 +7,6 @@
   <maintainer email="root@todo.todo">root</maintainer>
   <license>TODO: License declaration</license>
 
-  <buildtool_depend>ament_python</buildtool_depend>
-
   <depend>robot_interfaces</depend>
 
   <test_depend>ament_copyright</test_depend>
