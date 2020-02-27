@@ -19,6 +19,9 @@
   <exec_depend>turtlebot_description</exec_depend>
   <exec_depend>joy</exec_depend>
 
+  <!-- Compute Battery -->
+  <exec_depend>smart_battery_driver</exec_depend>
+
   <!-- Not hardware specific -->
   <exec_depend>teleop_twist_joy</exec_depend>
   <exec_depend>cartographer_ros</exec_depend>
