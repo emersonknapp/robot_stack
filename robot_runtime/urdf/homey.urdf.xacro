@@ -17,7 +17,7 @@
     <visual>
       <origin xyz="0 0 0.0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://robot_stack/meshes/lds01.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://robot_runtime/meshes/lds01.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="dark"/>
     </visual>

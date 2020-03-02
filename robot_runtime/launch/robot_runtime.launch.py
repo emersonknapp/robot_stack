@@ -50,9 +50,9 @@ def include_launch(
 
 
 def generate_launch_description():
-    stack_share = get_package_share_directory('robot_stack')
-    teleop_params_file = os.path.join(stack_share, 'config', 'teleop_xbox.config.yaml')
-    map_path = os.path.join(stack_share, 'maps', 'willow-partial0.yaml')
+    runtime_share = get_package_share_directory('robot_runtime')
+    teleop_params_file = os.path.join(runtime_share, 'config', 'teleop_xbox.config.yaml')
+    # map_path = os.path.join(runtime_share, 'maps', 'willow-partial0.yaml')
 
     use_base_driver = IfCondition(LaunchConfiguration('base_driver'))
     use_sim_time = LaunchConfiguration('use_sim_time')
@@ -86,7 +86,7 @@ def generate_launch_description():
                 output='screen',
             ),
             include_launch(
-                'robot_stack', 'description.launch.py',
+                'robot_runtime', 'description.launch.py',
                 launch_arguments={
                     **standard_params,
                     'joint_states': LaunchConfiguration('base_driver')
@@ -126,16 +126,16 @@ def generate_launch_description():
             output='screen',
         ),
 
-        include_launch(
-            'robot_stack', 'cartographer.launch.py', cond='slam',
-            launch_arguments={
-                'use_sim_sime': use_sim_time,
-                'configuration_basename': 'kobuki_lds_2d.lua',
-            }.items()),
-        include_launch(
-            'robot_stack', 'nav.launch.py', cond='nav',
-            launch_arguments={
-                'use_sim_time': use_sim_time,
-                'map': map_path,
-            }.items()),
+        # include_launch(
+        #     'robot_stack', 'cartographer.launch.py', cond='slam',
+        #     launch_arguments={
+        #         'use_sim_sime': use_sim_time,
+        #         'configuration_basename': 'kobuki_lds_2d.lua',
+        #     }.items()),
+        # include_launch(
+        #     'robot_stack', 'nav.launch.py', cond='nav',
+        #     launch_arguments={
+        #         'use_sim_time': use_sim_time,
+        #         'map': map_path,
+        #     }.items()),
     ])
