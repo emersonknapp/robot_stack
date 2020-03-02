@@ -23,21 +23,13 @@ from launch.actions import IncludeLaunchDescription
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
-from launch.substitutions import PythonExpression
 from launch_ros.actions import Node
 
 
-def IfEqualsCondition(arg_name, value):
-    return IfCondition(PythonExpression([
-        '"', LaunchConfiguration(arg_name), '" == "', value, '"'
-    ]))
-
-
 def include_launch(
-    *,
     package: str,
     name: str,
-    cond: Optional[str] = None,
+    cond: Optional[str],
     **kwargs,
 ):
     share = get_package_share_directory(package)
@@ -59,9 +51,7 @@ def generate_launch_description():
     standard_params = {'use_sim_time': LaunchConfiguration('use_sim_time')}
 
     return LaunchDescription([
-        DeclareLaunchArgument('base_model'),
         DeclareLaunchArgument('base_driver', default_value='true'),
-        DeclareLaunchArgument('viz', default_value='false'),
         DeclareLaunchArgument('slam', default_value='false'),
         DeclareLaunchArgument('nav', default_value='false'),
         DeclareLaunchArgument('use_sim_time', default_value='false'),
@@ -70,7 +60,7 @@ def generate_launch_description():
         # -- Kobuki Base
         GroupAction([
             include_launch(
-                'hls_lfcd_lds_driver', 'hlds_laser.launch.py', cond=use_base_driver,
+                'hls_lfcd_lds_driver', 'hlds_laser.launch.py', cond='base_driver',
                 launch_arguments={
                     'port': '/dev/lds01',
                     'frame_id': 'laser_link',
@@ -86,7 +76,7 @@ def generate_launch_description():
                 output='screen',
             ),
             include_launch(
-                'robot_runtime', 'description.launch.py',
+                'robot_runtime', 'description.launch.py', cond=None,
                 launch_arguments={
                     **standard_params,
                     'joint_states': LaunchConfiguration('base_driver')
@@ -98,13 +88,13 @@ def generate_launch_description():
             node_executable='smart_battery_driver',
             node_name='smart_battery_driver',
             parameters=[
-                standard_params,
                 {
-                    'i2c_bus': 6,
+                    'use_sim_time': use_sim_time,
+                    'device_path': '/dev/cp2112',
                     'battery_address': 0x0b,
-                }
+                },
             ],
-            output='screen,'
+            output='screen',
         ),
 
         # Teleop

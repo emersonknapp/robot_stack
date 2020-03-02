@@ -20,7 +20,7 @@ def render_xacro(xacro_path):
 
 def generate_launch_description():
     xacro_path = os.path.join(
-        get_package_share_directory('robot_stack'),
+        get_package_share_directory('robot_runtime'),
         'urdf', 'homey.urdf.xacro')
     urdf_file = render_xacro(xacro_path)
 
