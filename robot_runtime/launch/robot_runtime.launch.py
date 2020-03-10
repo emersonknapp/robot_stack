@@ -44,7 +44,7 @@ def include_launch(
 def generate_launch_description():
     runtime_share = get_package_share_directory('robot_runtime')
     teleop_params_file = os.path.join(runtime_share, 'config', 'teleop_xbox.config.yaml')
-    # map_path = os.path.join(runtime_share, 'maps', 'willow-partial0.yaml')
+    map_path = os.path.join(runtime_share, 'maps', 'willow-partial0.yaml')
 
     use_base_driver = IfCondition(LaunchConfiguration('base_driver'))
     use_sim_time = LaunchConfiguration('use_sim_time')
@@ -117,13 +117,13 @@ def generate_launch_description():
         ),
 
         include_launch(
-            'robot_stack', 'cartographer.launch.py', cond='slam',
+            'robot_runtime', 'cartographer.launch.py', cond='slam',
             launch_arguments={
                 'use_sim_sime': use_sim_time,
                 'configuration_basename': 'kobuki_lds_2d.lua',
             }.items()),
         include_launch(
-            'robot_stack', 'nav.launch.py', cond='nav',
+            'robot_runtime', 'nav.launch.py', cond='nav',
             launch_arguments={
                 'use_sim_time': use_sim_time,
                 'map': map_path,

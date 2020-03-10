@@ -21,7 +21,7 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    config_prefix = os.path.join(get_package_share_directory('robot_stack'), 'config')
+    config_prefix = os.path.join(get_package_share_directory('robot_runtime'), 'config')
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -30,7 +30,7 @@ def generate_launch_description():
             description='Full path to config file to load'),
         DeclareLaunchArgument(
             'configuration_basename',
-            default_value='neato_lds_2d.lua',
+            default_value='kobuki_lds_2d.lua',
             description='Name of lua file for cartographer'),
         DeclareLaunchArgument('use_sim_time', default_value='false'),
         Node(
