@@ -116,16 +116,16 @@ def generate_launch_description():
             output='screen',
         ),
 
-        # include_launch(
-        #     'robot_stack', 'cartographer.launch.py', cond='slam',
-        #     launch_arguments={
-        #         'use_sim_sime': use_sim_time,
-        #         'configuration_basename': 'kobuki_lds_2d.lua',
-        #     }.items()),
-        # include_launch(
-        #     'robot_stack', 'nav.launch.py', cond='nav',
-        #     launch_arguments={
-        #         'use_sim_time': use_sim_time,
-        #         'map': map_path,
-        #     }.items()),
+        include_launch(
+            'robot_stack', 'cartographer.launch.py', cond='slam',
+            launch_arguments={
+                'use_sim_sime': use_sim_time,
+                'configuration_basename': 'kobuki_lds_2d.lua',
+            }.items()),
+        include_launch(
+            'robot_stack', 'nav.launch.py', cond='nav',
+            launch_arguments={
+                'use_sim_time': use_sim_time,
+                'map': map_path,
+            }.items()),
     ])
