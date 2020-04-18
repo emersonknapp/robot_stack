@@ -115,6 +115,13 @@ def generate_launch_description():
             ],
             output='screen',
         ),
+        Node(
+            package='robot_indicators',
+            node_executable='robot_indicators',
+            node_name='robot_indicators',
+            parameters=[standard_params],
+            output='screen',
+        ),
 
         include_launch(
             'robot_runtime', 'cartographer.launch.py', cond='slam',
