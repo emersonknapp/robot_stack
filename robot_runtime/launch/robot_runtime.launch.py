@@ -83,20 +83,6 @@ def generate_launch_description():
                 }.items())
         ]),
 
-        Node(
-            package='smart_battery_driver',
-            node_executable='smart_battery_driver',
-            node_name='smart_battery_driver',
-            parameters=[
-                {
-                    'use_sim_time': use_sim_time,
-                    'device_path': '/dev/cp2112',
-                    'battery_address': 0x0b,
-                },
-            ],
-            output='screen',
-        ),
-
         # Teleop
         Node(
             package='joy',
