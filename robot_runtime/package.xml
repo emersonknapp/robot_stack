@@ -44,6 +44,7 @@
   <exec_depend>ros2service</exec_depend>
   <exec_depend>ros2srv</exec_depend>
   <exec_depend>ros2topic</exec_depend>
+  <exec_depend>launch_candy</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

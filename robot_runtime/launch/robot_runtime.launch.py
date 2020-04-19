@@ -13,32 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
-from typing import Optional
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import GroupAction
-from launch.actions import IncludeLaunchDescription
 from launch.conditions import IfCondition
-from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
+from launch_candy import include_launch
 from launch_ros.actions import Node
-
-
-def include_launch(
-    package: str,
-    name: str,
-    cond: Optional[str],
-    **kwargs,
-):
-    share = get_package_share_directory(package)
-    launch_path = os.path.join(share, 'launch', name)
-    return IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(launch_path),
-        condition=IfCondition(LaunchConfiguration(cond)) if cond else None,
-        **kwargs
-    )
 
 
 def generate_launch_description():
@@ -65,8 +48,7 @@ def generate_launch_description():
                     'port': '/dev/lds01',
                     'frame_id': 'laser_link',
                     'use_sim_time': use_sim_time,
-                }.items(),
-            ),
+                }.items()),
             Node(
                 package='turtlebot2_drivers',
                 node_executable='kobuki_node',

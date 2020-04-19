@@ -12,40 +12,33 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import os
+
 from pathlib import Path
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.actions import IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
+from launch_candy import include_launch
 from launch_ros.actions import Node
 
 
 def generate_launch_description():
     nav2_bringup_dir = Path(get_package_share_directory('nav2_bringup'))
-    nav2_loco = nav2_bringup_dir / 'launch' / 'nav2_localization_launch.py'
-    nav2_nav = nav2_bringup_dir / 'launch' / 'nav2_navigation_launch.py'
     use_sim_time = LaunchConfiguration('use_sim_time')
     map_path = LaunchConfiguration('map')
-    parking_launch_path = os.path.join(
-        get_package_share_directory('parking'),
-        'launch', 'parking.launch.py')
 
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time', default_value='false'),
         DeclareLaunchArgument('map'),
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(parking_launch_path),
+        include_launch(
+            'parking', 'parking.launch.py',
             launch_arguments={
                 'map': map_path,
                 'use_sim_time': use_sim_time,
-            }.items(),
-        ),
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(str(nav2_loco)),
+            }.items()),
+        include_launch(
+            'nav2_bringup', 'nav2_localization_launch.py',
             launch_arguments={
                 'namespace': '',
                 'map': map_path,
@@ -53,10 +46,9 @@ def generate_launch_description():
                 'params_file': str(nav2_bringup_dir / 'params' / 'nav2_params.yaml'),
                 'use_lifecycle_mgr': 'false',
                 'use_remappings': 'false',
-            }.items(),
-        ),
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(str(nav2_nav)),
+            }.items()),
+        include_launch(
+            'nav2_bringup', 'nav2_navigation_launch.py',
             launch_arguments={
                 'namespace': '',
                 'use_sim_time': use_sim_time,
@@ -64,8 +56,7 @@ def generate_launch_description():
                 'use_lifecycle_mgr': 'false',
                 'use_remappings': 'false',
                 'map_subscribe_transient_local': 'true',
-            }.items(),
-        ),
+            }.items()),
         Node(
             package='nav2_lifecycle_manager',
             node_executable='lifecycle_manager',
