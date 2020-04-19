@@ -1,21 +1,12 @@
 import os
-import tempfile
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration
+from launch_candy import render_xacro
 from launch_ros.actions import Node
-import xacro
-
-
-def render_xacro(xacro_path):
-    urdf_content = xacro.process_file(xacro_path)
-    urdf_file = tempfile.NamedTemporaryFile(delete=False)
-    rendered_urdf = urdf_content.toprettyxml(indent='  ')
-    urdf_file.write(rendered_urdf.encode('utf-8'))
-    return urdf_file
 
 
 def generate_launch_description():

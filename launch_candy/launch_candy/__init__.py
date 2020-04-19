@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import tempfile
 from typing import Optional
 
 from ament_index_python.packages import get_package_share_directory
@@ -20,6 +21,7 @@ from launch.actions import IncludeLaunchDescription
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
+import xacro
 
 
 def include_launch(
@@ -35,3 +37,11 @@ def include_launch(
         condition=IfCondition(LaunchConfiguration(cond)) if cond else None,
         **kwargs
     )
+
+
+def render_xacro(xacro_path):
+    urdf_content = xacro.process_file(xacro_path)
+    urdf_file = tempfile.NamedTemporaryFile(delete=False)
+    rendered_urdf = urdf_content.toprettyxml(indent='  ')
+    urdf_file.write(rendered_urdf.encode('utf-8'))
+    return urdf_file
