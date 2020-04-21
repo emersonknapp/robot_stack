@@ -21,6 +21,7 @@ from launch.actions import IncludeLaunchDescription
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
+from launch.substitutions import PythonExpression
 import xacro
 
 
@@ -39,9 +40,15 @@ def include_launch(
     )
 
 
-def render_xacro(xacro_path):
+def render_xacro(xacro_path: str) -> str:
     urdf_content = xacro.process_file(xacro_path)
     urdf_file = tempfile.NamedTemporaryFile(delete=False)
     rendered_urdf = urdf_content.toprettyxml(indent='  ')
     urdf_file.write(rendered_urdf.encode('utf-8'))
     return urdf_file
+
+
+def IfEqualsCondition(arg_name: str, value: str):
+    return IfCondition(PythonExpression([
+        '"', LaunchConfiguration(arg_name), '" == "', value, '"'
+    ]))

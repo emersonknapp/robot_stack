@@ -32,12 +32,6 @@ def generate_launch_description():
         DeclareLaunchArgument('use_sim_time', default_value='false'),
         DeclareLaunchArgument('map'),
         include_launch(
-            'parking', 'parking.launch.py',
-            launch_arguments={
-                'map': map_path,
-                'use_sim_time': use_sim_time,
-            }.items()),
-        include_launch(
             'nav2_bringup', 'nav2_localization_launch.py',
             launch_arguments={
                 'namespace': '',

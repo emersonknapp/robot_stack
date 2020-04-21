@@ -103,4 +103,10 @@ def generate_launch_description():
                 'use_sim_time': use_sim_time,
                 'map': map_path,
             }.items()),
+        include_launch(
+            'parking', 'parking.launch.py',
+            launch_arguments={
+                'map': map_path,
+                'use_sim_time': use_sim_time,
+            }.items()),
     ])
