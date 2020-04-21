@@ -38,7 +38,7 @@ def generate_launch_description():
         DeclareLaunchArgument('slam', default_value='false'),
         DeclareLaunchArgument('nav', default_value='false'),
         DeclareLaunchArgument('use_sim_time', default_value='false'),
-
+        DeclareLaunchArgument('map_path', default_value=map_path),
         # Base
         # -- Kobuki Base
         GroupAction([
@@ -101,12 +101,12 @@ def generate_launch_description():
             'robot_runtime', 'nav.launch.py', cond='nav',
             launch_arguments={
                 'use_sim_time': use_sim_time,
-                'map': map_path,
+                'map': LaunchConfiguration('map_path'),
             }.items()),
         include_launch(
             'parking', 'parking.launch.py',
             launch_arguments={
-                'map': map_path,
+                'map': LaunchConfiguration('map_path'),
                 'use_sim_time': use_sim_time,
             }.items()),
     ])
