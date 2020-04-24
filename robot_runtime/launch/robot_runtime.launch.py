@@ -42,7 +42,7 @@ def generate_launch_description():
         # Base
         # -- Kobuki Base
         GroupAction([
-            PushRosNamespace('base'),
+            # PushRosNamespace('base'),
             include_launch(
                 'hls_lfcd_lds_driver', 'hlds_laser.launch.py', cond='base_driver',
                 launch_arguments={
@@ -58,13 +58,13 @@ def generate_launch_description():
                 condition=use_base_driver,
                 output='screen',
             ),
-            include_launch(
-                'robot_runtime', 'description.launch.py', cond=None,
-                launch_arguments={
-                    **standard_params,
-                    'joint_states': LaunchConfiguration('base_driver')
-                }.items())
         ]),
+        include_launch(
+            'robot_runtime', 'description.launch.py', cond=None,
+            launch_arguments={
+                **standard_params,
+                'joint_states': LaunchConfiguration('base_driver')
+            }.items()),
 
         # Teleop
         Node(
@@ -75,31 +75,41 @@ def generate_launch_description():
             output='screen',
         ),
         Node(
-            package='joy',
-            node_executable='joy_node',
-            node_name='joy_driver',
-            node_namespace='joy',
-            parameters=[standard_params],
-            output='screen',
-        ),
-        Node(
-            package='teleop_twist_joy',
-            node_executable='teleop_node',
-            node_namespace='joy',
-            node_name='joy_interpreter',
-            parameters=[
-                teleop_params_file,
-                standard_params,
-            ],
-            output='screen',
-        ),
-        Node(
             package='robot_indicators',
             node_executable='robot_indicators',
             node_name='robot_indicators',
             parameters=[standard_params],
             output='screen',
         ),
+        GroupAction([
+            PushRosNamespace('joy'),
+            Node(
+                package='joy',
+                node_executable='joy_node',
+                node_name='joy_driver',
+                parameters=[standard_params],
+                output='screen',
+            ),
+            Node(
+                package='teleop_twist_joy',
+                node_executable='teleop_node',
+                node_name='joy_interpreter',
+                parameters=[
+                    teleop_params_file,
+                    standard_params,
+                ],
+                output='screen',
+            ),
+        ]),
+        GroupAction([
+            PushRosNamespace('parking'),
+            include_launch(
+                'parking', 'parking.launch.py',
+                launch_arguments={
+                    'map': LaunchConfiguration('map_path'),
+                    'use_sim_time': use_sim_time,
+                }.items()),
+        ]),
 
         include_launch(
             'robot_runtime', 'cartographer.launch.py', cond='slam',
@@ -113,13 +123,4 @@ def generate_launch_description():
                 'use_sim_time': use_sim_time,
                 'map': LaunchConfiguration('map_path'),
             }.items()),
-        GroupAction([
-            PushRosNamespace('parking'),
-            include_launch(
-                'parking', 'parking.launch.py',
-                launch_arguments={
-                    'map': LaunchConfiguration('map_path'),
-                    'use_sim_time': use_sim_time,
-                }.items()),
-        ]),
     ])

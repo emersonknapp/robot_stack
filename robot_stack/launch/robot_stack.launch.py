@@ -43,7 +43,8 @@ def generate_launch_description():
             launch_arguments={
                 **standard_params,
                 'base_driver': 'false',
-                'slam': 'true',
+                # 'slam': 'true',
+                'nav': 'true',
                 'map_path': map_path
             }.items())
     ])

@@ -21,6 +21,7 @@ from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_candy import include_launch
 from launch_ros.actions import Node
+from launch_ros.actions import PushRosNamespace
 
 
 def generate_launch_description():
@@ -31,6 +32,7 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time', default_value='false'),
         DeclareLaunchArgument('map'),
+        # PushRosNamespace('nav'),
         include_launch(
             'nav2_bringup', 'nav2_localization_launch.py',
             launch_arguments={
@@ -39,7 +41,7 @@ def generate_launch_description():
                 'use_sim_time': use_sim_time,
                 'params_file': str(nav2_bringup_dir / 'params' / 'nav2_params.yaml'),
                 'use_lifecycle_mgr': 'false',
-                'use_remappings': 'false',
+                'use_remappings': 'true',
             }.items()),
         include_launch(
             'nav2_bringup', 'nav2_navigation_launch.py',
@@ -48,7 +50,7 @@ def generate_launch_description():
                 'use_sim_time': use_sim_time,
                 'params_file': str(nav2_bringup_dir / 'params' / 'nav2_params.yaml'),
                 'use_lifecycle_mgr': 'false',
-                'use_remappings': 'false',
+                'use_remappings': 'true',
                 'map_subscribe_transient_local': 'true',
             }.items()),
         Node(
