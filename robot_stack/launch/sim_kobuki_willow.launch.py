@@ -30,12 +30,12 @@ def get_package_install_directory(package_name):
 
 def generate_launch_description():
     world = os.path.join(
-        get_package_share_directory('neato_gazebo'),
+        get_package_share_directory('robot_stack'),
         'worlds', 'neato_test.world')
 
     model_path = ':'.join([
         # for misc sensors
-        get_package_install_directory('robot_stack'),
+        get_package_install_directory('robot_runtime'),
         # for kobuki mobile base
         get_package_install_directory('kobuki_description'),
         # for stacked plates
@@ -43,7 +43,7 @@ def generate_launch_description():
     ])
     print(model_path)
     xacro_path = os.path.join(
-        get_package_share_directory('robot_stack'), 'urdf', 'homey.urdf.xacro')
+        get_package_share_directory('robot_runtime'), 'urdf', 'homey.urdf.xacro')
     urdf_file = render_xacro(xacro_path)
 
     return LaunchDescription([

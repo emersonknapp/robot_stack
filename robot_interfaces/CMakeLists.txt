@@ -25,6 +25,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/DeleteParkingSpot.srv"
   "srv/GetParkingSpot.srv"
   "srv/RenameParkingSpot.srv"
+  "srv/SetMuxSource.srv"
   DEPENDENCIES geometry_msgs action_msgs
   ADD_LINTER_TESTS
 )

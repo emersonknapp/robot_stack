@@ -67,9 +67,17 @@ def generate_launch_description():
 
         # Teleop
         Node(
+            package='cmd_vel_mux',
+            node_executable='cmd_vel_mux',
+            node_name='cmd_vel_mux',
+            parameters=[standard_params],
+            output='screen',
+        ),
+        Node(
             package='joy',
             node_executable='joy_node',
             node_name='joy_driver',
+            node_namespace='joy',
             parameters=[standard_params],
             output='screen',
         ),
