@@ -22,6 +22,7 @@ class CmdVelMux(Node):
     choices = ['joy', 'nav']
 
     def __init__(self):
+        super(CmdVelMux, self).__init__('cmd_vel_mux')
         self._subscriptions = [
             self.create_subscription(Twist, '/joy/cmd_vel', self.joy_cb, 10),
             self.create_subscription(Twist, '/nav/cmd_vel', self.nav_cb, 10),
