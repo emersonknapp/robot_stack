@@ -22,12 +22,12 @@ from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration
 from launch_candy import include_launch
 from launch_ros.actions import Node
+from launch_ros.actions import PushRosNamespace
 
 
 def generate_launch_description():
     runtime_share = get_package_share_directory('robot_runtime')
     teleop_params_file = os.path.join(runtime_share, 'config', 'teleop_xbox.config.yaml')
-    map_path = os.path.join(runtime_share, 'maps', 'willow-partial0.yaml')
 
     use_base_driver = IfCondition(LaunchConfiguration('base_driver'))
     use_sim_time = LaunchConfiguration('use_sim_time')
@@ -38,10 +38,11 @@ def generate_launch_description():
         DeclareLaunchArgument('slam', default_value='false'),
         DeclareLaunchArgument('nav', default_value='false'),
         DeclareLaunchArgument('use_sim_time', default_value='false'),
-        DeclareLaunchArgument('map_path', default_value=map_path),
+        DeclareLaunchArgument('map_path'),
         # Base
         # -- Kobuki Base
         GroupAction([
+            PushRosNamespace('base'),
             include_launch(
                 'hls_lfcd_lds_driver', 'hlds_laser.launch.py', cond='base_driver',
                 launch_arguments={
@@ -84,6 +85,7 @@ def generate_launch_description():
         Node(
             package='teleop_twist_joy',
             node_executable='teleop_node',
+            node_namespace='joy',
             node_name='joy_interpreter',
             parameters=[
                 teleop_params_file,
@@ -111,10 +113,13 @@ def generate_launch_description():
                 'use_sim_time': use_sim_time,
                 'map': LaunchConfiguration('map_path'),
             }.items()),
-        include_launch(
-            'parking', 'parking.launch.py',
-            launch_arguments={
-                'map': LaunchConfiguration('map_path'),
-                'use_sim_time': use_sim_time,
-            }.items()),
+        GroupAction([
+            PushRosNamespace('parking'),
+            include_launch(
+                'parking', 'parking.launch.py',
+                launch_arguments={
+                    'map': LaunchConfiguration('map_path'),
+                    'use_sim_time': use_sim_time,
+                }.items()),
+        ]),
     ])

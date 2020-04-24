@@ -47,7 +47,7 @@ class ParkingSpotServer(Node):
 
         self.markers = {}
         self.poses = {}
-        self.marker_server = InteractiveMarkerServer(self, 'parking')
+        self.marker_server = InteractiveMarkerServer(self, 'markers')
         map_param = self.get_parameter('map_yaml').value
         self.map_path = Path(map_param)
         self.load_map()

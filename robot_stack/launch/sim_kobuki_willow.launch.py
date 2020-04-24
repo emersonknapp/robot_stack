@@ -31,7 +31,7 @@ def get_package_install_directory(package_name):
 def generate_launch_description():
     world = os.path.join(
         get_package_share_directory('robot_stack'),
-        'worlds', 'neato_test.world')
+        'worlds', 'willow.world')
 
     model_path = ':'.join([
         # for misc sensors
@@ -69,15 +69,10 @@ def generate_launch_description():
             },
             output='screen',
         ),
-        include_launch(
-            'robot_stack', 'robot_stack.launch.py',
-            launch_arguments={
-                'base_model': LaunchConfiguration('base'),
-                'base_driver': 'false',
-                'viz': LaunchConfiguration('viz'),
-                'use_sim_time': 'true',
-                'slam': LaunchConfiguration('slam'),
-                'nav': LaunchConfiguration('nav'),
-            }.items(),
-        ),
+        # include_launch(
+        #     'robot_stack', 'robot_stack.launch.py',
+        #     launch_arguments={
+        #         'use_sim_time': 'true',
+        #     }.items(),
+        # ),
     ])
