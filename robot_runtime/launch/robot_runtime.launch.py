@@ -41,66 +41,26 @@ def generate_launch_description():
         DeclareLaunchArgument('map_path'),
         # Base
         # -- Kobuki Base
-        GroupAction([
-            # PushRosNamespace('base'),
-            include_launch(
-                'hls_lfcd_lds_driver', 'hlds_laser.launch.py', cond='base_driver',
-                launch_arguments={
-                    'port': '/dev/lds01',
-                    'frame_id': 'laser_link',
-                    'use_sim_time': use_sim_time,
-                }.items()),
-            Node(
-                package='turtlebot2_drivers',
-                node_executable='kobuki_node',
-                node_name='kobuki_base',
-                parameters=[standard_params],
-                condition=use_base_driver,
-                output='screen',
-            ),
-        ]),
+        include_launch(
+            'hls_lfcd_lds_driver', 'hlds_laser.launch.py', cond='base_driver',
+            launch_arguments={
+                'port': '/dev/lds01',
+                'frame_id': 'laser_link',
+                'use_sim_time': use_sim_time,
+            }.items()),
         include_launch(
             'robot_runtime', 'description.launch.py', cond=None,
             launch_arguments={
                 **standard_params,
-                'joint_states': LaunchConfiguration('base_driver')
+                'joint_states': use_base_driver,
+            }.items()),
+        include_launch(
+            'robot_runtime', 'teleop.launch.py',
+            launch_arguments={
+                'base_driver': use_base_driver,
+                'use_sim_time': use_sim_time,
             }.items()),
 
-        # Teleop
-        Node(
-            package='cmd_vel_mux',
-            node_executable='cmd_vel_mux',
-            node_name='cmd_vel_mux',
-            parameters=[standard_params],
-            output='screen',
-        ),
-        Node(
-            package='robot_indicators',
-            node_executable='robot_indicators',
-            node_name='robot_indicators',
-            parameters=[standard_params],
-            output='screen',
-        ),
-        GroupAction([
-            PushRosNamespace('joy'),
-            Node(
-                package='joy',
-                node_executable='joy_node',
-                node_name='joy_driver',
-                parameters=[standard_params],
-                output='screen',
-            ),
-            Node(
-                package='teleop_twist_joy',
-                node_executable='teleop_node',
-                node_name='joy_interpreter',
-                parameters=[
-                    teleop_params_file,
-                    standard_params,
-                ],
-                output='screen',
-            ),
-        ]),
         GroupAction([
             PushRosNamespace('parking'),
             include_launch(
