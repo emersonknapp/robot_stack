@@ -1,5 +1,5 @@
 ---
-/:
+/joy:
   joy_interpreter:
     ros__parameters:
       axis_linear.x: 1  # Left thumb stick vertical

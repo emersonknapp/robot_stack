@@ -39,7 +39,10 @@ class XPadLED:
         else:
             command = self.P1_CONNECT
         cmd_str = str(command)
-        self.device.write_text(cmd_str)
+        try:
+            self.device.write_text(cmd_str)
+        except FileNotFoundError:
+            pass
 
 
 def main():
