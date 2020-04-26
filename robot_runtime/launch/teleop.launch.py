@@ -69,14 +69,14 @@ def generate_launch_description():
             Node(
                 package='joy',
                 node_executable='joy_node',
-                node_name='joy_driver',
+                node_name='driver',
                 parameters=[standard_params],
                 output='screen',
             ),
             Node(
                 package='teleop_twist_joy',
                 node_executable='teleop_node',
-                node_name='joy_interpreter',
+                node_name='interpreter',
                 parameters=[
                     teleop_params_file,
                     standard_params,

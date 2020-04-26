@@ -20,8 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'robot_indicators = robot_indicators.robot_indicators:main'
-            'joy_commands = robot_indicators.joy_commands:main'
+            'robot_indicators = robot_indicators.robot_indicators:main',
+            'joy_commands = robot_indicators.joy_commands:main',
         ],
     },
 )

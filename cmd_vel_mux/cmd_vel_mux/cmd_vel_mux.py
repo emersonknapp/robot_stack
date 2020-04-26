@@ -50,7 +50,7 @@ class CmdVelMux(Node):
         return response
 
     def pub_source(self):
-        self._src_pub.publish(self._source)
+        self._src_pub.publish(String(data=self._source))
 
 
 def main():

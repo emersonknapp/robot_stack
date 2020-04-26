@@ -3,6 +3,7 @@ from pathlib import Path
 
 import rclpy
 from rclpy.node import Node
+from std_msgs.msg import String
 
 
 class XPadLED(Node):
@@ -32,20 +33,29 @@ class XPadLED(Node):
 
     def __init__(self):
         super(XPadLED, self).__init__('xpad_led')
+        self._command = self.P2_CONNECT
         self._device = Path('/dev') / 'xled0'
         self._write_period = 1.0
-        self._timer = self.create_timer(self._write_period, lambda: self.write_light(True))
+        self._setting = self.P2_CONNECT
+        self._timer = self.create_timer(self._write_period, self.write_light)
+        self._sub = self.create_subscription(String, '/cmd_vel_mux_source', self._src_cb, 10)
 
-    def write_light(self, on: bool = True):
-        if on:
-            command = self.P2_CONNECT
-        else:
-            command = self.P1_CONNECT
-        cmd_str = str(command)
+    def write_light(self, off=False):
+        if off:
+            self._command = self.P1_CONNECT
+        cmd_str = str(self._command)
         try:
-            self.device.write_text(cmd_str)
+            self._device.write_text(cmd_str)
         except FileNotFoundError:
             pass
+
+    def _src_cb(self, msg):
+        if msg.data == 'nav':
+            self._command = self.P3_CONNECT
+        elif msg.data == 'joy':
+            self._command = self.P2_CONNECT
+        else:
+            self._command = self.DIAG_FLASH
 
 
 def main():

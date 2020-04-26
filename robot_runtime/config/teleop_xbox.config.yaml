@@ -1,6 +1,6 @@
 ---
 /joy:
-  joy_interpreter:
+  interpreter:
     ros__parameters:
       axis_linear.x: 1  # Left thumb stick vertical
       scale_linear.x: 0.2
