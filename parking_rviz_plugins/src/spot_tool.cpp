@@ -20,7 +20,8 @@
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/load_resource.hpp"
 
-namespace parking_rviz_plugins {
+namespace parking_rviz_plugins
+{
 
 ParkingSpotTool::ParkingSpotTool()
 : rviz_default_plugins::tools::PoseTool()
@@ -36,7 +37,7 @@ void ParkingSpotTool::onInitialize()
   setName("Parking Spot");
   setIcon(rviz_common::loadPixmap("package://rviz_default_plugins/icons/classes/SetGoal.png"));
   add_client_ = context_->getRosNodeAbstraction().lock()->get_raw_node()->
-    template create_client<robot_interfaces::srv::AddParkingSpot>("add_parking_spot");
+    template create_client<robot_interfaces::srv::AddParkingSpot>("/parking/add_parking_spot");
 }
 
 void

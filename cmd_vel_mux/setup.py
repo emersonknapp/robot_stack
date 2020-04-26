@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'robot_indicators'
+package_name = 'cmd_vel_mux'
 
 setup(
     name=package_name,
@@ -13,15 +13,14 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='emerson',
+    maintainer='Emerson Knapp',
     maintainer_email='me@emersonknapp.com',
-    description='Lightning indicators for robot',
+    description='TODO: Package description',
     license='Apache 2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'robot_indicators = robot_indicators.robot_indicators:main',
-            'joy_commands = robot_indicators.joy_commands:main',
+            'cmd_vel_mux = cmd_vel_mux.cmd_vel_mux:main'
         ],
     },
 )
