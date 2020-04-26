@@ -2,9 +2,10 @@
 from pathlib import Path
 
 import rclpy
+from rclpy.node import Node
 
 
-class XPadLED:
+class XPadLED(Node):
     ALL_FLASH = 1
     # blink 4 times then solid
     P1_CONNECT = 2
@@ -30,8 +31,10 @@ class XPadLED:
     ALL_LIGHT = 15
 
     def __init__(self):
-        self.device = Path('/dev') / 'xled0'
-        self.write_period = 1.0
+        super(XPadLED, self).__init__('xpad_led')
+        self._device = Path('/dev') / 'xled0'
+        self._write_period = 1.0
+        self._timer = self.create_timer(self._write_period, lambda: self.write_light(True))
 
     def write_light(self, on: bool = True):
         if on:
@@ -47,13 +50,10 @@ class XPadLED:
 
 def main():
     rclpy.init()
-    node = rclpy.create_node('robot_indicators')
-    led = XPadLED()
-    timer = node.create_timer(led.write_period, lambda: led.write_light(True))
+    node = XPadLED()
     rclpy.spin(node)
-    timer.cancel()
     rclpy.shutdown()
-    led.write_light(False)
+    node.write_light(False)
 
 
 if __name__ == '__main__':

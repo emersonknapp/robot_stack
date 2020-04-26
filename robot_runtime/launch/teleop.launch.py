@@ -50,15 +50,22 @@ def generate_launch_description():
             parameters=[standard_params],
             output='screen',
         ),
-        Node(
-            package='robot_indicators',
-            node_executable='robot_indicators',
-            node_name='robot_indicators',
-            parameters=[standard_params],
-            output='screen',
-        ),
         GroupAction([
             PushRosNamespace('joy'),
+            Node(
+                package='robot_indicators',
+                node_executable='robot_indicators',
+                node_name='xpad_led',
+                parameters=[standard_params],
+                output='screen',
+            ),
+            Node(
+                package='robot_indicators',
+                node_executable='joy_commands',
+                node_name='commands',
+                parameters=[standard_params],
+                output='screen',
+            ),
             Node(
                 package='joy',
                 node_executable='joy_node',

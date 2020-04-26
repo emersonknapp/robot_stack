@@ -14,8 +14,8 @@
 from geometry_msgs.msg import Twist
 import rclpy
 from rclpy.node import Node
-
 from robot_interfaces.srv import SetMuxSource
+from std_msgs.msg import String
 
 
 class CmdVelMux(Node):
@@ -29,7 +29,9 @@ class CmdVelMux(Node):
         ]
         self._source = 'joy'
         self._publisher = self.create_publisher(Twist, '/cmd_vel', 10)
-        self._set_srv = self.create_service(SetMuxSource, 'set_source', self.set_source)
+        self._set_srv = self.create_service(SetMuxSource, 'cmd_vel_source', self.set_source)
+        self._src_pub = self.create_publisher(String, '/cmd_vel_mux_source', 10)
+        self._timer = self.create_timer(1, self.pub_source)
 
     def joy_cb(self, msg):
         if self._source == 'joy':
@@ -46,6 +48,9 @@ class CmdVelMux(Node):
             self._source = request.name
             response.success = True
         return response
+
+    def pub_source(self):
+        self._src_pub.publish(self._source)
 
 
 def main():

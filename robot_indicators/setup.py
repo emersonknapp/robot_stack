@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'robot_indicators = robot_indicators.robot_indicators:main'
+            'joy_commands = robot_indicators.joy_commands:main'
         ],
     },
 )
