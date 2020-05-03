@@ -12,24 +12,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import os
-
-from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import GroupAction
-from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration
 from launch_candy import include_launch
-from launch_ros.actions import Node
 from launch_ros.actions import PushRosNamespace
 
 
 def generate_launch_description():
-    runtime_share = get_package_share_directory('robot_runtime')
-    teleop_params_file = os.path.join(runtime_share, 'config', 'teleop_xbox.config.yaml')
-
-    use_base_driver = IfCondition(LaunchConfiguration('base_driver'))
+    base_driver = LaunchConfiguration('base_driver')
     use_sim_time = LaunchConfiguration('use_sim_time')
     standard_params = {'use_sim_time': LaunchConfiguration('use_sim_time')}
 
@@ -52,12 +44,12 @@ def generate_launch_description():
             'robot_runtime', 'description.launch.py', cond=None,
             launch_arguments={
                 **standard_params,
-                'joint_states': use_base_driver,
+                'joint_states': base_driver,
             }.items()),
         include_launch(
             'robot_runtime', 'teleop.launch.py',
             launch_arguments={
-                'base_driver': use_base_driver,
+                'base_driver': base_driver,
                 'use_sim_time': use_sim_time,
             }.items()),
 
