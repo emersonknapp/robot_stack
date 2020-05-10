@@ -17,6 +17,7 @@ from launch.actions import DeclareLaunchArgument
 from launch.actions import GroupAction
 from launch.substitutions import LaunchConfiguration
 from launch_candy import include_launch
+from launch_ros.actions import Node
 from launch_ros.actions import PushRosNamespace
 
 
@@ -52,6 +53,13 @@ def generate_launch_description():
                 'base_driver': base_driver,
                 'use_sim_time': use_sim_time,
             }.items()),
+        Node(
+            package='prometheus_exporter',
+            node_executable='prometheus_exporter',
+            node_name='prometheus_exporter',
+            parameters=[standard_params],
+            output='screen',
+        ),
 
         GroupAction([
             PushRosNamespace('parking'),

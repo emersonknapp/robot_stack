@@ -27,8 +27,10 @@
   <exec_depend>cartographer_ros</exec_depend>
   <exec_depend>nav2_bringup</exec_depend>
   <exec_depend>parking</exec_depend>
+  <exec_depend>launch_candy</exec_depend>
+  <exec_depend>prometheus_exporter</exec_depend>
 
-  <!-- runtime -->
+  <!-- cli -->
   <exec_depend>ros2launch</exec_depend>
   <exec_depend>ros2action</exec_depend>
   <exec_depend>ros2component</exec_depend>
@@ -45,7 +47,6 @@
   <exec_depend>ros2service</exec_depend>
   <exec_depend>ros2srv</exec_depend>
   <exec_depend>ros2topic</exec_depend>
-  <exec_depend>launch_candy</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
