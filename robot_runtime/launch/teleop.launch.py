@@ -29,54 +29,59 @@ def generate_launch_description():
 
     use_base_driver = IfCondition(LaunchConfiguration('base_driver'))
     standard_params = {'use_sim_time': LaunchConfiguration('use_sim_time')}
+    base_device = LaunchConfiguration('base_device')
 
     return LaunchDescription([
         DeclareLaunchArgument('base_driver', default_value='true'),
         DeclareLaunchArgument('use_sim_time', default_value='false'),
+        DeclareLaunchArgument('base_device', default_value='/dev/ttyUSB0'),
         # Base
         Node(
-            package='turtlebot2_drivers',
-            node_executable='kobuki_node',
-            node_name='kobuki_base',
-            parameters=[standard_params],
+            package='kobuki_node',
+            executable='kobuki_ros_node',
+            name='kobuki_node',
+            parameters=[standard_params, {
+                'device_port': base_device,
+            }],
             condition=use_base_driver,
             output='screen',
         ),
         # Teleop
         Node(
             package='cmd_vel_mux',
-            node_executable='cmd_vel_mux',
-            node_name='cmd_vel_mux',
+            executable='cmd_vel_mux',
+            name='cmd_vel_mux',
             parameters=[standard_params],
+            remappings=[('/cmd_vel', '/commands/velocity')],
             output='screen',
         ),
         GroupAction([
             PushRosNamespace('joy'),
             Node(
                 package='robot_indicators',
-                node_executable='robot_indicators',
-                node_name='xpad_led',
+                executable='robot_indicators',
+                name='xpad_led',
                 parameters=[standard_params],
                 output='screen',
             ),
             Node(
                 package='robot_indicators',
-                node_executable='joy_commands',
-                node_name='commands',
+                executable='joy_commands',
+                name='commands',
                 parameters=[standard_params],
                 output='screen',
             ),
             Node(
                 package='joy',
-                node_executable='joy_node',
-                node_name='driver',
+                executable='joy_node',
+                name='driver',
                 parameters=[standard_params],
                 output='screen',
             ),
             Node(
                 package='teleop_twist_joy',
-                node_executable='teleop_node',
-                node_name='interpreter',
+                executable='teleop_node',
+                name='interpreter',
                 parameters=[
                     teleop_params_file,
                     standard_params,
