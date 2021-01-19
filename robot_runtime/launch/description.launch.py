@@ -21,17 +21,18 @@ def generate_launch_description():
         DeclareLaunchArgument('joint_states', default_value='false'),
         Node(
             package='robot_state_publisher',
-            node_executable='robot_state_publisher',
-            node_name='robot_state_publisher',
+            executable='robot_state_publisher',
+            name='robot_state_publisher',
             output='screen',
             parameters=[{
                 'publish_frequency': LaunchConfiguration('publish_frequency'),
-                'use_sim_time': LaunchConfiguration('use_sim_time')}],
+                'use_sim_time': LaunchConfiguration('use_sim_time'),
+            }],
             arguments=[urdf_file.name],
         ),
         Node(
             package='joint_state_publisher',
-            node_executable='joint_state_publisher',
+            executable='joint_state_publisher',
             name='joint_state_publisher',
             output='screen',
             arguments=[urdf_file.name],
