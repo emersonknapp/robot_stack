@@ -46,18 +46,15 @@ def generate_launch_description():
         get_package_share_directory('robot_runtime'), 'urdf', 'homey.urdf.xacro')
     urdf_file = render_xacro(xacro_path)
 
+    xacro_path = os.path.join(
+        get_package_share_directory('robot_runtime'), 'urdf', 'dock.urdf')
+    dock_urdf = render_xacro(xacro_path)
+
     return LaunchDescription([
         DeclareLaunchArgument('slam', default_value='true'),
         DeclareLaunchArgument('nav', default_value='false'),
         DeclareLaunchArgument('base', default_value='kobuki'),
         DeclareLaunchArgument('viz', default_value='true'),
-        Node(
-            package='gazebo_ros',
-            node_executable='spawn_entity.py',
-            node_name='spawn_base',
-            output='screen',
-            arguments=['-file', urdf_file.name, '-entity', 'homey'],
-        ),
         ExecuteProcess(
             cmd=[
                 'gazebo', '--verbose', world,
@@ -68,6 +65,20 @@ def generate_launch_description():
                 'GAZEBO_MODEL_PATH': [model_path],
             },
             output='screen',
+        ),
+        Node(
+            package='gazebo_ros',
+            executable='spawn_entity.py',
+            name='spawn_base',
+            output='screen',
+            arguments=['-file', urdf_file.name, '-entity', 'homey'],
+        ),
+        Node(
+            package='gazebo_ros',
+            executable='spawn_entity.py',
+            name='spawn_base',
+            output='screen',
+            arguments=['-file', dock_urdf.name, '-entity', 'dock'],
         ),
         # include_launch(
         #     'robot_stack', 'robot_stack.launch.py',
