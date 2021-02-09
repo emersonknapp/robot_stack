@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+from pathlib import Path
 import tempfile
 from typing import Optional
 
@@ -46,6 +47,10 @@ def render_xacro(xacro_path: str) -> str:
     rendered_urdf = urdf_content.toprettyxml(indent='  ')
     urdf_file.write(rendered_urdf.encode('utf-8'))
     return urdf_file
+
+
+def pkg_share(package_name: str) -> Path:
+    return Path(get_package_share_directory(package_name))
 
 
 def IfEqualsCondition(arg_name: str, value: str):

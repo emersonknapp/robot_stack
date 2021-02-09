@@ -27,7 +27,7 @@
   <exec_depend>teleop_twist_joy</exec_depend>
   <exec_depend>cmd_vel_mux</exec_depend>
   <exec_depend>cartographer_ros</exec_depend>
-  <!-- <exec_depend>nav2_bringup</exec_depend> -->
+  <exec_depend>nav2_bringup</exec_depend>
   <exec_depend>parking</exec_depend>
   <exec_depend>launch_candy</exec_depend>
   <exec_depend>prometheus_exporter</exec_depend>

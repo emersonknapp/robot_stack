@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright 2019 Emerson Knapp
+# Copyright 2021 Emerson Knapp
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,34 +15,32 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
+from launch_candy import pkg_share
 from launch_ros.actions import Node
+from launch.actions import GroupAction
+from launch_ros.actions import PushRosNamespace
 
 
 def generate_launch_description():
+    rviz_config_path = str(pkg_share('robot_stack') / 'config' / 'homey.rviz')
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time', default_value='false'),
-        DeclareLaunchArgument('map'),
-        Node(
-            package='parking',
-            executable='parking_server',
-            name='parking_server',
-            output='screen',
-            parameters=[
-                {
+        GroupAction([
+            PushRosNamespace('viztools'),
+            Node(
+                package='rviz2',
+                executable='rviz2',
+                name='rviz2',
+                arguments=['-d', rviz_config_path],
+                output='screen',
+                parameters=[{
                     'use_sim_time': LaunchConfiguration('use_sim_time'),
-                    'map_yaml': LaunchConfiguration('map'),
-                },
-            ]
-        ),
-        Node(
-            package='parking',
-            executable='nav_server',
-            name='nav_to_parking_spot',
-            output='screen',
-            parameters=[
-                {
-                    'use_sim_time': LaunchConfiguration('use_sim_time'),
-                },
-            ]
-        )
+                }],
+            ),
+            Node(
+                package='rqt_graph',
+                executable='rqt_graph',
+                name='rqt_graph'
+            ),
+        ]),
     ])

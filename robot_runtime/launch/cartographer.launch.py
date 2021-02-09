@@ -35,8 +35,8 @@ def generate_launch_description():
         DeclareLaunchArgument('use_sim_time', default_value='false'),
         Node(
             package='cartographer_ros',
-            node_executable='cartographer_node',
-            node_name='cartographer_node',
+            executable='cartographer_node',
+            name='cartographer_node',
             output='screen',
             parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
             arguments=[
@@ -54,8 +54,8 @@ def generate_launch_description():
             description='OccupancyGrid publishing period'),
         Node(
             package='cartographer_ros',
-            node_executable='occupancy_grid_node',
-            node_name='occupancy_grid_node',
+            executable='occupancy_grid_node',
+            name='occupancy_grid_node',
             output='screen',
             parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
             arguments=[
