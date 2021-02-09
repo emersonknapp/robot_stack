@@ -13,61 +13,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pathlib import Path
-
-from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_candy import include_launch
-from launch_ros.actions import Node
-from launch_ros.actions import PushRosNamespace
+from launch_candy import pkg_share
 
 
 def generate_launch_description():
-    nav2_bringup_dir = Path(get_package_share_directory('nav2_bringup'))
-    use_sim_time = LaunchConfiguration('use_sim_time')
-    map_path = LaunchConfiguration('map')
+    nav2_params = str(pkg_share('nav2_bringup') / 'params' / 'nav2_params.yaml')
 
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time', default_value='false'),
         DeclareLaunchArgument('map'),
-        # PushRosNamespace('nav'),
         include_launch(
-            'nav2_bringup', 'nav2_localization_launch.py',
+            'nav2_bringup', 'bringup_launch.py',
             launch_arguments={
-                'namespace': '',
-                'map': map_path,
-                'use_sim_time': use_sim_time,
-                'params_file': str(nav2_bringup_dir / 'params' / 'nav2_params.yaml'),
-                'use_lifecycle_mgr': 'false',
-                'use_remappings': 'true',
+                'map': LaunchConfiguration('map'),
+                'use_sim_time': LaunchConfiguration('use_sim_time'),
+                'params_file': nav2_params,
+                # 'slam': 'False',
             }.items()),
-        include_launch(
-            'nav2_bringup', 'nav2_navigation_launch.py',
-            launch_arguments={
-                'namespace': '',
-                'use_sim_time': use_sim_time,
-                'params_file': str(nav2_bringup_dir / 'params' / 'nav2_params.yaml'),
-                'use_lifecycle_mgr': 'false',
-                'use_remappings': 'true',
-                'map_subscribe_transient_local': 'true',
-            }.items()),
-        Node(
-            package='nav2_lifecycle_manager',
-            node_executable='lifecycle_manager',
-            node_name='lifecycle_manager',
-            output='screen',
-            parameters=[
-                {'use_sim_time': use_sim_time},
-                {'autostart': True},
-                {'node_names': [
-                    'map_server',
-                    'amcl',
-                    'controller_server',
-                    'planner_server',
-                    'recoveries_server',
-                    'bt_navigator',
-                    'waypoint_follower'
-                ]}])
     ])

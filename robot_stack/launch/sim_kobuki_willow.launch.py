@@ -12,49 +12,58 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import os
-
-from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
-from launch.actions import ExecuteProcess
-from launch.substitutions import LaunchConfiguration
-from launch_candy import include_launch
-from launch_candy import render_xacro
-from launch_ros.actions import Node
+from launch.actions import (
+    DeclareLaunchArgument,
+    ExecuteProcess,
+    GroupAction,
+)
+from launch_candy import (
+    # include_launch,
+    pkg_share,
+    render_xacro,
+)
+from launch_ros.actions import (
+    Node,
+    PushRosNamespace,
+    SetRemap,
+)
 
 
-def get_package_install_directory(package_name):
-    return os.path.join(get_package_share_directory(package_name), '..')
+def pkg_install(package_name):
+    return pkg_share(package_name).parent
 
 
 def generate_launch_description():
-    world = os.path.join(
-        get_package_share_directory('robot_stack'),
-        'worlds', 'willow.world')
+    world = str(pkg_share('robot_stack') / 'worlds' / 'willow.world')
 
-    model_path = ':'.join([
+    model_path = ':'.join([str(p) for p in [
         # for misc sensors
-        get_package_install_directory('robot_runtime'),
+        pkg_install('robot_runtime'),
         # for kobuki mobile base
-        get_package_install_directory('kobuki_description'),
+        pkg_install('kobuki_description'),
         # for stacked plates
-        get_package_install_directory('turtlebot_description'),
-    ])
+        pkg_install('turtlebot_description'),
+    ]])
     print(model_path)
-    xacro_path = os.path.join(
-        get_package_share_directory('robot_runtime'), 'urdf', 'homey.urdf.xacro')
+    xacro_path = str(pkg_share('robot_runtime') / 'urdf' / 'homey.urdf.xacro')
     urdf_file = render_xacro(xacro_path)
 
-    xacro_path = os.path.join(
-        get_package_share_directory('robot_runtime'), 'urdf', 'dock.urdf')
+    xacro_path = str(pkg_share('robot_runtime') / 'urdf' / 'dock.urdf')
     dock_urdf = render_xacro(xacro_path)
+
+    map_path = str(pkg_share('robot_stack') / 'maps' / 'willow-partial0.yaml')
+    ns = '/simulation'
 
     return LaunchDescription([
         DeclareLaunchArgument('slam', default_value='true'),
         DeclareLaunchArgument('nav', default_value='false'),
         DeclareLaunchArgument('base', default_value='kobuki'),
         DeclareLaunchArgument('viz', default_value='true'),
+        SetRemap(f'{ns}/cmd_vel', '/cmd_vel'),
+        SetRemap(f'{ns}/odom', '/odom'),
+        SetRemap(f'{ns}/scan', '/scan'),
+
         ExecuteProcess(
             cmd=[
                 'gazebo', '--verbose', world,
@@ -66,24 +75,52 @@ def generate_launch_description():
             },
             output='screen',
         ),
-        Node(
-            package='gazebo_ros',
-            executable='spawn_entity.py',
-            name='spawn_base',
-            output='screen',
-            arguments=['-file', urdf_file.name, '-entity', 'homey'],
-        ),
-        Node(
-            package='gazebo_ros',
-            executable='spawn_entity.py',
-            name='spawn_base',
-            output='screen',
-            arguments=['-file', dock_urdf.name, '-entity', 'dock'],
-        ),
+        GroupAction([
+            PushRosNamespace(ns),
+            Node(
+                package='gazebo_ros',
+                executable='spawn_entity.py',
+                name='spawn_base',
+                output='screen',
+                arguments=[
+                    '-file', urdf_file.name,
+                    '-entity', 'homey',
+                    '-robot_namespace', ns,
+                ],
+            ),
+            Node(
+                package='gazebo_ros',
+                executable='spawn_entity.py',
+                name='spawn_dock',
+                output='screen',
+                arguments=[
+                    '-file', dock_urdf.name,
+                    '-entity', 'dock',
+                    '-robot_namespace', ns,
+                ],
+            ),
+            Node(
+                package='tf2_ros',
+                executable='static_transform_publisher',
+                name='dock_position',
+                output='screen',
+                arguments=['0', '2', '0', '0', '0', '0', 'map', 'kobuki_dock']
+            ),
+            Node(
+                package='tf2_ros',
+                executable='static_transform_publisher',
+                name='fake_loco',
+                output='screen',
+                arguments=['0', '0', '0', '0', '0', '0', 'map', 'odom']
+            ),
+        ]),
         # include_launch(
-        #     'robot_stack', 'robot_stack.launch.py',
+        #     'robot_runtime', 'robot_runtime.launch.py',
         #     launch_arguments={
         #         'use_sim_time': 'true',
-        #     }.items(),
-        # ),
+        #         'base_driver': 'false',
+        #         # 'slam': 'true',
+        #         'nav': 'true',
+        #         'map_path': map_path
+        #     }.items())
     ])
