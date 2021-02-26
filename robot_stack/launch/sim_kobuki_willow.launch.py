@@ -44,13 +44,11 @@ def generate_launch_description():
         pkg_install('kobuki_description'),
         # for stacked plates
         pkg_install('turtlebot_description'),
+        pkg_share('robot_stack') / 'models',
     ]])
     print(model_path)
     xacro_path = str(pkg_share('robot_runtime') / 'urdf' / 'homey.urdf.xacro')
     urdf_file = render_xacro(xacro_path)
-
-    xacro_path = str(pkg_share('robot_runtime') / 'urdf' / 'dock.urdf')
-    dock_urdf = render_xacro(xacro_path)
 
     map_path = str(pkg_share('robot_stack') / 'maps' / 'willow-partial0.yaml')
     ns = '/simulation'
@@ -85,17 +83,6 @@ def generate_launch_description():
                 arguments=[
                     '-file', urdf_file.name,
                     '-entity', 'homey',
-                    '-robot_namespace', ns,
-                ],
-            ),
-            Node(
-                package='gazebo_ros',
-                executable='spawn_entity.py',
-                name='spawn_dock',
-                output='screen',
-                arguments=[
-                    '-file', dock_urdf.name,
-                    '-entity', 'dock',
                     '-robot_namespace', ns,
                 ],
             ),

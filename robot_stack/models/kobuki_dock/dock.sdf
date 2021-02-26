@@ -1,0 +1,22 @@
+<?xml version='1.0'?>
+<sdf version="1.4">
+  <model name="kobuki_dock">
+    <static>true</static>
+    <link name="dock_link">
+      <visual name="dock_visual">
+        <geometry>
+          <box>
+            <size>0.205 0.105 0.075</size>
+          </box>
+        </geometry>
+      </visual>
+      <collision name="dock_collision">
+        <geometry>
+          <box>
+            <size>0.205 0.105 0.075</size>
+          </box>
+        </geometry>
+      </collision>
+    </link>
+  </model>
+</sdf>

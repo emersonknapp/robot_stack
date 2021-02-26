@@ -21,17 +21,24 @@ public:
   void DoThing();
   void pub_msg();
 
-  gazebo_ros::Node::SharedPtr ros_node_;
-  physics::WorldPtr world_;
   std::string frame_name_;
-  gazebo::transport::NodePtr gazebo_node_;
+
+  // ros resources
+  gazebo_ros::Node::SharedPtr ros_node_;
   rclcpp::Publisher<kobuki_ros_interfaces::msg::DockInfraRed>::SharedPtr ir_pub_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr str_pub_;
   rclcpp::TimerBase::SharedPtr timer_;
+
+  // gazebo resources
+  physics::WorldPtr world_;
+  gazebo::transport::NodePtr gazebo_node_;
+  physics::ModelPtr dock_model_;
+  physics::ModelPtr robot_model_;
 };
 
 void KobukiDockImpl::Load(physics::WorldPtr world, sdf::ElementPtr sdf)
 {
+  world_ = world;
   ros_node_ = gazebo_ros::Node::Get(sdf);
   gazebo_node_ = boost::make_shared<gazebo::transport::Node>();
 
@@ -53,8 +60,19 @@ void KobukiDockImpl::DoThing()
 
 void KobukiDockImpl::pub_msg()
 {
+  if (!dock_model_) {
+    dock_model_ = world_->ModelByName("kobuki_dock");
+  }
+  if (!robot_model_) {
+    robot_model_ = world_->ModelByName("homey");
+  }
+
   auto msg = std::make_unique<std_msgs::msg::String>();
-  msg->data = "hi";
+  if (dock_model_ && robot_model_) {
+    msg->data = "Have both!";
+  } else {
+    msg->data = "Haven't found robot and dock yet.";
+  }
   str_pub_->publish(std::move(msg));
 }
 

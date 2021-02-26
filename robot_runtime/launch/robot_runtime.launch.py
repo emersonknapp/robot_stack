@@ -27,7 +27,7 @@ def generate_launch_description():
     standard_params = {'use_sim_time': LaunchConfiguration('use_sim_time')}
 
     return LaunchDescription([
-        DeclareLaunchArgument('base_driver', default_value='true'),
+        DeclareLaunchArgument('base_driver', default_value='false'),
         DeclareLaunchArgument('slam', default_value='false'),
         DeclareLaunchArgument('nav', default_value='false'),
         DeclareLaunchArgument('use_sim_time', default_value='false'),
@@ -42,41 +42,41 @@ def generate_launch_description():
                 'use_sim_time': use_sim_time,
             }.items()),
         include_launch(
-            'robot_runtime', 'description.launch.py', cond=None,
+            'robot_runtime', 'description.launch.py',
             launch_arguments={
                 **standard_params,
                 'joint_states': base_driver,
             }.items()),
-        include_launch(
-            'robot_runtime', 'teleop.launch.py',
-            launch_arguments={
-                'base_driver': base_driver,
-                'use_sim_time': use_sim_time,
-            }.items()),
-        Node(
-            package='prometheus_exporter',
-            node_executable='prometheus_exporter',
-            node_name='prometheus_exporter',
-            parameters=[standard_params],
-            output='screen',
-        ),
+        # include_launch(
+        #     'robot_runtime', 'teleop.launch.py',
+        #     launch_arguments={
+        #         'base_driver': base_driver,
+        #         'use_sim_time': use_sim_time,
+        #     }.items()),
+        # Node(
+        #     package='prometheus_exporter',
+        #     executable='prometheus_exporter',
+        #     name='prometheus_exporter',
+        #     parameters=[standard_params],
+        #     output='screen',
+        # ),
 
-        GroupAction([
-            PushRosNamespace('parking'),
-            include_launch(
-                'parking', 'parking.launch.py',
-                launch_arguments={
-                    'map': LaunchConfiguration('map_path'),
-                    'use_sim_time': use_sim_time,
-                }.items()),
-        ]),
+        # GroupAction([
+        #     PushRosNamespace('parking'),
+        #     include_launch(
+        #         'parking', 'parking.launch.py',
+        #         launch_arguments={
+        #             'map': LaunchConfiguration('map_path'),
+        #             'use_sim_time': use_sim_time,
+        #         }.items()),
+        # ]),
 
-        include_launch(
-            'robot_runtime', 'cartographer.launch.py', cond='slam',
-            launch_arguments={
-                'use_sim_sime': use_sim_time,
-                'configuration_basename': 'kobuki_lds_2d.lua',
-            }.items()),
+        # include_launch(
+        #     'robot_runtime', 'cartographer.launch.py', cond='slam',
+        #     launch_arguments={
+        #         'use_sim_sime': use_sim_time,
+        #         'configuration_basename': 'kobuki_lds_2d.lua',
+        #     }.items()),
         include_launch(
             'robot_runtime', 'nav.launch.py', cond='nav',
             launch_arguments={

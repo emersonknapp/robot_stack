@@ -12,6 +12,10 @@
       <name>Willow</name>
       <pose>-25.0 -15.0 0 0 0 0</pose>
     </include>
+    <include>
+      <uri>model://kobuki_dock</uri>
+      <pose>1 0 0.075 0 0 0</pose>
+    </include>
 
     <plugin name="kobukidock" filename="librobot_dock_ir.so" />
   </world>
