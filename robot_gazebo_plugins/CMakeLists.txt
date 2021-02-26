@@ -35,6 +35,12 @@ ament_target_dependencies(robot_dock_ir
 )
 ament_export_libraries(robot_dock_ir)
 
+install(
+  TARGETS robot_dock_ir
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
