@@ -7,19 +7,19 @@
 namespace robot_gazebo_plugins
 {
 
-class DockInfraredPluginImpl;
+class KobukiDockImpl;
 
 
-class DockInfraredPlugin : public gazebo::SensorPlugin
+class KobukiDockPlugin : public gazebo::WorldPlugin
 {
 public:
-  DockInfraredPlugin();
-  virtual ~DockInfraredPlugin() = default;
+  KobukiDockPlugin();
+  virtual ~KobukiDockPlugin() = default;
 
-  virtual void Load(gazebo::sensors::SensorPtr sensor, sdf::ElementPtr sdf);
+  virtual void Load(gazebo::physics::WorldPtr world, sdf::ElementPtr sdf);
 
 private:
-  std::unique_ptr<DockInfraredPluginImpl> impl_;
+  std::unique_ptr<KobukiDockImpl> impl_;
 };
 
 }  // namespace robot_gazebo_plugins

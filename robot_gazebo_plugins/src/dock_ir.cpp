@@ -11,42 +11,41 @@ namespace robot_gazebo_plugins
 
 using namespace gazebo;
 
-class DockInfraredPluginImpl {
+class KobukiDockImpl {
 public:
-  DockInfraredPluginImpl();
-  virtual ~DockInfraredPluginImpl();
+  KobukiDockImpl();
+  virtual ~KobukiDockImpl();
 
-  void Load(sensors::SensorPtr sensor, sdf::ElementPtr sdf);
+  void Load(physics::WorldPtr world, sdf::ElementPtr sdf);
 
   gazebo_ros::Node::SharedPtr ros_node_;
+  physics::WorldPtr world_;
   std::string frame_name_;
   gazebo::transport::NodePtr gazebo_node_;
   rclcpp::Publisher<kobuki_ros_interfaces::msg::DockInfraRed>::SharedPtr ir_pub_;
 };
 
-void DockInfraredPluginImpl::Load(sensors::SensorPtr sensor, sdf::ElementPtr sdf)
+void KobukiDockImpl::Load(physics::WorldPtr world, sdf::ElementPtr sdf)
 {
   ros_node_ = gazebo_ros::Node::Get(sdf);
-  frame_name_ = gazebo_ros::SensorFrameID(*sensor, *sdf);
 
   ir_pub_ = ros_node_->create_publisher<kobuki_ros_interfaces::msg::DockInfraRed>(
     "dock_ir", rclcpp::SensorDataQoS());
 
   gazebo_node_ = boost::make_shared<gazebo::transport::Node>();
-  gazebo_node_->Init(sensor->WorldName());
 }
 
 
-DockInfraredPlugin::DockInfraredPlugin()
-  : SensorPlugin()
-  , impl_(std::make_unique<DockInfraredPluginImpl>())
+KobukiDockPlugin::KobukiDockPlugin()
+  : WorldPlugin()
+  , impl_(std::make_unique<KobukiDockImpl>())
 {
 }
 
-void DockInfraredPlugin::Load(sensors::SensorPtr sensor, sdf::ElementPtr sdf)
+void KobukiDockPlugin::Load(physics::WorldPtr world, sdf::ElementPtr sdf)
 {
-  impl_->Load(sensor, sdf);
+  impl_->Load(world, sdf);
 }
 
-GZ_REGISTER_SENSOR_PLUGIN(DockInfraredPlugin)
+GZ_REGISTER_WORLD_PLUGIN(KobukiDockPlugin)
 }  // namespace robot_gazebo_plugins
