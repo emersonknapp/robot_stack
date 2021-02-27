@@ -1,0 +1,147 @@
+<?xml version='1.0'?>
+<sdf version="1.4">
+
+  
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  <model name="kobuki_dock">
+    <static>true</static>
+    <link name="dock_link">
+      <pose>0 0 0.0375 0 0 0</pose>
+      <visual name="dock_visual">
+        <geometry>
+          <box>
+            <size>0.205 0.105 0.075</size>
+          </box>
+        </geometry>
+      </visual>
+      <collision name="dock_collision">
+        <geometry>
+          <box>
+            <size>0.205 0.105 0.075</size>
+          </box>
+        </geometry>
+      </collision>
+    </link>
+    
+    <link name="near_center">
+      <pose>0.0 0.25 0.1 0 0 0</pose>
+      <visual name="near_center">
+        
+  <geometry>
+    <box>
+      <size>0.05 0.5 0.2</size>
+    </box>
+  </geometry>
+  
+        <material>
+          <ambient>1 1 0 0.5</ambient>
+          <diffuse>1 1 0 0.5</diffuse>
+        </material>
+      </visual>
+    </link>
+  
+    
+    <link name="far_center">
+      <pose>0.0 1.0 0.1 0 0 0</pose>
+      <visual name="far_center">
+        
+  <geometry>
+    <box>
+      <size>0.05 2.0 0.2</size>
+    </box>
+  </geometry>
+  
+        <material>
+          <ambient>0.5 0.5 0 0.5</ambient>
+          <diffuse>0.5 0.5 0 0.5</diffuse>
+        </material>
+      </visual>
+    </link>
+  
+    
+    <link name="near_left">
+      <pose>-0.275 0.25 0.1 0 0 0</pose>
+      <visual name="near_left">
+        
+  <geometry>
+    <box>
+      <size>0.5 0.5 0.2</size>
+    </box>
+  </geometry>
+  
+        <material>
+          <ambient>1 0 0 0.5</ambient>
+          <diffuse>1 0 0 0.5</diffuse>
+        </material>
+      </visual>
+    </link>
+  
+    
+    <link name="far_left">
+      <pose>-0.275 1.0 0.1 0 0 0</pose>
+      <visual name="far_left">
+        
+  <geometry>
+    <box>
+      <size>0.5 2.0 0.2</size>
+    </box>
+  </geometry>
+  
+        <material>
+          <ambient>0.5 0 0 0.5</ambient>
+          <diffuse>0.5 0 0 0.5</diffuse>
+        </material>
+      </visual>
+    </link>
+  
+    
+    <link name="near_right">
+      <pose>0.275 0.25 0.1 0 0 0</pose>
+      <visual name="near_right">
+        
+  <geometry>
+    <box>
+      <size>0.5 0.5 0.2</size>
+    </box>
+  </geometry>
+  
+        <material>
+          <ambient>0 1 0 0.5</ambient>
+          <diffuse>0 1 0 0.5</diffuse>
+        </material>
+      </visual>
+    </link>
+  
+    
+    <link name="far_right">
+      <pose>0.275 1.0 0.1 0 0 0</pose>
+      <visual name="far_right">
+        
+  <geometry>
+    <box>
+      <size>0.5 2.0 0.2</size>
+    </box>
+  </geometry>
+  
+        <material>
+          <ambient>0 0.5 0 0.5</ambient>
+          <diffuse>0 0.5 0 0.5</diffuse>
+        </material>
+      </visual>
+    </link>
+  
+  </model>
+</sdf>
