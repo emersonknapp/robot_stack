@@ -25,9 +25,11 @@ def generate_launch_description():
     base_driver = LaunchConfiguration('base_driver')
     use_sim_time = LaunchConfiguration('use_sim_time')
     standard_params = {'use_sim_time': LaunchConfiguration('use_sim_time')}
+    base_device = LaunchConfiguration('base_device')
 
     return LaunchDescription([
         DeclareLaunchArgument('base_driver', default_value='false'),
+        DeclareLaunchArgument('base_device', default_value='/dev/ttyUSB0'),
         DeclareLaunchArgument('slam', default_value='false'),
         DeclareLaunchArgument('nav', default_value='false'),
         DeclareLaunchArgument('use_sim_time', default_value='false'),
@@ -47,12 +49,21 @@ def generate_launch_description():
                 **standard_params,
                 'joint_states': base_driver,
             }.items()),
-        # include_launch(
-        #     'robot_runtime', 'teleop.launch.py',
-        #     launch_arguments={
-        #         'base_driver': base_driver,
-        #         'use_sim_time': use_sim_time,
-        #     }.items()),
+        Node(
+            package='kobuki_node',
+            executable='kobuki_ros_node',
+            name='kobuki_node',
+            parameters=[standard_params, {
+                'device_port': base_device,
+            }],
+            condition=base_driver,
+            output='screen',
+        ),
+        include_launch(
+            'robot_runtime', 'teleop.launch.py',
+            launch_arguments={
+                'use_sim_time': use_sim_time,
+            }.items()),
         # Node(
         #     package='prometheus_exporter',
         #     executable='prometheus_exporter',

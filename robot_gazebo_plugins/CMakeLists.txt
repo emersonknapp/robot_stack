@@ -21,6 +21,7 @@ find_package(gazebo_dev REQUIRED)
 find_package(gazebo_ros REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(kobuki_ros_interfaces REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 add_library(robot_dock_ir
   SHARED
@@ -32,6 +33,7 @@ ament_target_dependencies(robot_dock_ir
   gazebo_ros
   rclcpp
   kobuki_ros_interfaces
+  geometry_msgs
 )
 ament_export_libraries(robot_dock_ir)
 

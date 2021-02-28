@@ -18,6 +18,8 @@
   <exec_depend>rviz_plugin_tutorials</exec_depend>
   <exec_depend>parking_rviz_plugins</exec_depend>
   <exec_depend>nav2_rviz_plugins</exec_depend>
+  
+  <exec_depend>robot_gazebo_plugins</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

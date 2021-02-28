@@ -17,60 +17,51 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import GroupAction
-from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration
+from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.actions import PushRosNamespace
 
 
 def generate_launch_description():
     runtime_share = get_package_share_directory('robot_runtime')
-    teleop_params_file = os.path.join(runtime_share, 'config', 'teleop_xbox.config.yaml')
+    cmd_topic = LaunchConfiguration('cmd_topic')
 
-    use_base_driver = IfCondition(LaunchConfiguration('base_driver'))
     standard_params = {'use_sim_time': LaunchConfiguration('use_sim_time')}
-    base_device = LaunchConfiguration('base_device')
+    teleop_params_file = PathJoinSubstitution([
+        runtime_share, 'config', LaunchConfiguration('joy_config')
+    ])
 
     return LaunchDescription([
-        DeclareLaunchArgument('base_driver', default_value='true'),
         DeclareLaunchArgument('use_sim_time', default_value='false'),
-        DeclareLaunchArgument('base_device', default_value='/dev/ttyUSB0'),
+        DeclareLaunchArgument('cmd_topic', default_value='/commands/velocity'),
+        DeclareLaunchArgument('joy_config', default_value='teleop_xbox.config.yaml'),
         # Base
-        Node(
-            package='kobuki_node',
-            executable='kobuki_ros_node',
-            name='kobuki_node',
-            parameters=[standard_params, {
-                'device_port': base_device,
-            }],
-            condition=use_base_driver,
-            output='screen',
-        ),
         # Teleop
         Node(
             package='cmd_vel_mux',
             executable='cmd_vel_mux',
             name='cmd_vel_mux',
             parameters=[standard_params],
-            remappings=[('/cmd_vel', '/commands/velocity')],
+            remappings=[('/cmd_vel', cmd_topic)],
             output='screen',
         ),
         GroupAction([
             PushRosNamespace('joy'),
-            Node(
-                package='robot_indicators',
-                executable='robot_indicators',
-                name='xpad_led',
-                parameters=[standard_params],
-                output='screen',
-            ),
-            Node(
-                package='robot_indicators',
-                executable='joy_commands',
-                name='commands',
-                parameters=[standard_params],
-                output='screen',
-            ),
+            # Node(
+            #     package='robot_indicators',
+            #     executable='robot_indicators',
+            #     name='xpad_led',
+            #     parameters=[standard_params],
+            #     output='screen',
+            # ),
+            # Node(
+            #     package='robot_indicators',
+            #     executable='joy_commands',
+            #     name='commands',
+            #     parameters=[standard_params],
+            #     output='screen',
+            # ),
             Node(
                 package='joy',
                 executable='joy_node',

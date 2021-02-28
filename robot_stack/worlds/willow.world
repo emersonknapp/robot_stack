@@ -10,11 +10,11 @@
     <include>
       <uri>model://willowgarage</uri>
       <name>Willow</name>
-      <pose>-25.0 -15.0 0 0 0 0</pose>
+      <pose>-25.0 -15.0 0.001 0 0 0</pose>
     </include>
     <include>
       <uri>model://kobuki_dock</uri>
-      <pose>1 0 0.075 0 0 0</pose>
+      <pose>3 0 0 0 0 3.14</pose>
     </include>
 
     <plugin name="kobukidock" filename="librobot_dock_ir.so" />

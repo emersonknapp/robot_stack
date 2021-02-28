@@ -11,6 +11,7 @@
 
   <depend>gazebo</depend>
   <depend>kobuki_ros_interfaces</depend>
+  <depend>geometry_msgs</depend>
 
   <build_depend>gazebo_dev</build_depend>
   <build_depend>gazebo_msgs</build_depend>

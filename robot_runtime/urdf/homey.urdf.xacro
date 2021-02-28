@@ -6,6 +6,27 @@
 
   <xacro:kobuki/>
   <xacro:stack_hexagons parent="base_link"/>
+  <gazebo reference="ir_receiver_center_joint">
+    <preserveFixedJoint>true</preserveFixedJoint>
+  </gazebo>
+  <gazebo reference="ir_receiver_right_joint">
+    <preserveFixedJoint>true</preserveFixedJoint>
+  </gazebo>
+  <gazebo reference="ir_receiver_left_joint">
+    <preserveFixedJoint>true</preserveFixedJoint>
+  </gazebo>
+  <gazebo reference="cliff_sensor_front_joint">
+    <preserveFixedJoint>true</preserveFixedJoint>
+  </gazebo>
+  <gazebo reference="cliff_sensor_right_joint">
+    <preserveFixedJoint>true</preserveFixedJoint>
+  </gazebo>
+  <gazebo reference="cliff_sensor_left_joint">
+    <preserveFixedJoint>true</preserveFixedJoint>
+  </gazebo>
+  <gazebo reference="gyro_joint">
+    <preserveFixedJoint>true</preserveFixedJoint>
+  </gazebo>
 
   <joint name="laser_joint" type="fixed">
     <parent link="base_link"/>
@@ -36,6 +57,9 @@
     </inertial>
   </link>
 
+  <gazebo reference="laser_joint">
+    <preserveFixedJoint>true</preserveFixedJoint>
+  </gazebo>
   <gazebo reference="laser_link">
     <sensor type="ray" name="laser">
       <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_ray_sensor.so">
