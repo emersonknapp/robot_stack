@@ -23,22 +23,30 @@ find_package(rclcpp REQUIRED)
 find_package(kobuki_ros_interfaces REQUIRED)
 find_package(geometry_msgs REQUIRED)
 
-add_library(robot_dock_ir
-  SHARED
-  src/dock_ir.cpp
-)
-target_include_directories(robot_dock_ir PUBLIC include)
+add_library(robot_dock_ir SHARED src/dock_ir.cpp)
+target_include_directories(robot_dock_ir PUBLIC src)
 ament_target_dependencies(robot_dock_ir
   gazebo_dev
   gazebo_ros
-  rclcpp
-  kobuki_ros_interfaces
   geometry_msgs
+  kobuki_ros_interfaces
+  rclcpp
 )
 ament_export_libraries(robot_dock_ir)
 
+add_library(robot_dock_vis SHARED src/dock_vis.cpp)
+target_include_directories(robot_dock_vis PUBLIC src)
+ament_target_dependencies(robot_dock_vis
+  gazebo_dev
+  gazebo_ros
+  geometry_msgs
+  kobuki_ros_interfaces
+  rclcpp
+)
+ament_export_libraries(robot_dock_vis)
+
 install(
-  TARGETS robot_dock_ir
+  TARGETS robot_dock_ir robot_dock_vis
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -46,12 +54,6 @@ install(
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
-  # the following line skips the linter which checks for copyrights
-  # uncomment the line when a copyright and license is not present in all source files
-  #set(ament_cmake_copyright_FOUND TRUE)
-  # the following line skips cpplint (only works in a git repo)
-  # uncomment the line when this package is not in a git repo
-  #set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
 

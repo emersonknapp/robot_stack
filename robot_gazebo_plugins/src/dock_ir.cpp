@@ -1,16 +1,13 @@
-#include "robot_gazebo_plugins/dock_ir.hpp"
-
-#include "kobuki_ros_interfaces/msg/dock_infra_red.hpp"
-
-#include "gazebo_ros/node.hpp"
-#include <gazebo_ros/utils.hpp>
-#include "gazebo_ros/conversions/sensor_msgs.hpp"
-#include "gazebo_ros/conversions/geometry_msgs.hpp"
-#include "geometry_msgs/msg/pose.hpp"
-#include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/string.hpp"
+#include "dock_ir.hpp"
 
 #include "gazebo/rendering/Visual.hh"
+#include "gazebo_ros/conversions/geometry_msgs.hpp"
+#include "gazebo_ros/node.hpp"
+#include "gazebo_ros/utils.hpp"
+#include "geometry_msgs/msg/pose.hpp"
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "kobuki_ros_interfaces/msg/dock_infra_red.hpp"
+#include "std_msgs/msg/string.hpp"
 
 namespace robot_gazebo_plugins
 {
@@ -35,11 +32,11 @@ public:
   // ros resources
   gazebo_ros::Node::SharedPtr ros_node_;
   RosPub<DockInfraRed> ir_pub_;
+  RosPub<geometry_msgs::msg::PoseStamped> pose_pub_;
   rclcpp::TimerBase::SharedPtr timer_;
 
   // gazebo resources
   physics::WorldPtr world_;
-  gazebo::transport::NodePtr gazebo_node_;
   physics::EntityPtr dock_link_;
   physics::EntityPtr ir_left_link_;
   physics::EntityPtr ir_center_link_;
@@ -50,13 +47,14 @@ void KobukiDockImpl::Load(physics::WorldPtr world, sdf::ElementPtr sdf)
 {
   world_ = world;
   ros_node_ = gazebo_ros::Node::Get(sdf);
-  gazebo_node_ = boost::make_shared<gazebo::transport::Node>();
 
   ir_pub_ = ros_node_->create_publisher<kobuki_ros_interfaces::msg::DockInfraRed>(
     "dock_ir", rclcpp::SensorDataQoS());
+  pose_pub_ = ros_node_->create_publisher<geometry_msgs::msg::PoseStamped>(
+    "ir_pose", rclcpp::SensorDataQoS());
 
   timer_ = ros_node_->create_wall_timer(
-    std::chrono::seconds(1),
+    std::chrono::milliseconds(33),
     std::bind(&KobukiDockImpl::TimerCallback, this));
 }
 
@@ -109,22 +107,35 @@ void KobukiDockImpl::PublishDockStatus()
   uint8_t right = 0;
 
   if (ir_left_link_) {
-    left = evaluatePose(ir_left_link_->WorldPose() - dock_pose);
+    auto rel = ir_left_link_->WorldPose() - dock_pose;
+    left = evaluatePose(rel);
+    auto msg = std::make_unique<geometry_msgs::msg::PoseStamped>();
+    msg->pose = gazebo_ros::Convert<geometry_msgs::msg::Pose>(ir_left_link_->WorldPose());
+    msg->header.frame_id = "ir_left";
+    pose_pub_->publish(std::move(msg));
   }
   if (ir_center_link_) {
     center = evaluatePose(ir_center_link_->WorldPose() - dock_pose);
+    auto msg = std::make_unique<geometry_msgs::msg::PoseStamped>();
+    msg->pose = gazebo_ros::Convert<geometry_msgs::msg::Pose>(ir_center_link_->WorldPose());
+    msg->header.frame_id = "ir_center";
+    pose_pub_->publish(std::move(msg));
   }
   if (ir_right_link_) {
     right = evaluatePose(ir_right_link_->WorldPose() - dock_pose);
+    auto msg = std::make_unique<geometry_msgs::msg::PoseStamped>();
+    msg->pose = gazebo_ros::Convert<geometry_msgs::msg::Pose>(ir_right_link_->WorldPose());
+    msg->header.frame_id = "ir_right";
+    pose_pub_->publish(std::move(msg));
   }
 
   auto ir_msg = std::make_unique<kobuki_ros_interfaces::msg::DockInfraRed>();
   ir_msg->header.frame_id = "dock_ir_link";
   ir_msg->header.stamp = ros_node_->get_clock()->now();
   ir_msg->data.reserve(3);
-  ir_msg->data.push_back(left);
-  ir_msg->data.push_back(center);
   ir_msg->data.push_back(right);
+  ir_msg->data.push_back(center);
+  ir_msg->data.push_back(left);
   ir_pub_->publish(std::move(ir_msg));
 }
 

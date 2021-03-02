@@ -16,7 +16,8 @@ public:
   KobukiDockPlugin();
   virtual ~KobukiDockPlugin() = default;
 
-  virtual void Load(gazebo::physics::WorldPtr world, sdf::ElementPtr sdf);
+protected:
+  void Load(gazebo::physics::WorldPtr world, sdf::ElementPtr sdf) override;
 
 private:
   std::unique_ptr<KobukiDockImpl> impl_;

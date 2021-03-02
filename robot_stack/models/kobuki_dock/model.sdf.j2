@@ -6,39 +6,12 @@
   {% set dock_width = 0.205 %}
   {% set dock_length = 0.105 %}
 
-  {% set near_dist = near_dist | default(0.5) %}
-  {% set far_dist = far_dist | default(2.0) %}
-  {% set c_width = c_width | default(0.05) %}
-  {% set s_width = s_width | default(0.5) %}
-  {% set detect_height = 0.2 %}
-  {% set viz_alpha = 0.5 %}
-
-  {% macro box(w, l, h) %}
-  <geometry>
-    <box>
-      <size>{{ w }} {{ l }} {{ h }}</size>
-    </box>
-  </geometry>
-  {% endmacro %}
-
-  {% macro vizbox(name, width, dist, side, r, g, b) %}
-    <link name="{{name}}">
-      <pose>{{ side * (width / 2.0 + c_width / 2.0) }} {{ dist / 2.0 }} {{ detect_height / 2.0 }} 0 0 0</pose>
-      <visual name="{{name}}">
-        {{ box(width, dist, detect_height) }}
-        <material>
-          <ambient>{{ r }} {{ g }} {{ b }} {{ viz_alpha }}</ambient>
-          <diffuse>{{ r }} {{ g }} {{ b }} {{ viz_alpha }}</diffuse>
-        </material>
-      </visual>
-    </link>
-  {% endmacro %}
-
   <model name="kobuki_dock">
     <static>true</static>
     <link name="dock_link">
       <pose>0 0 {{dock_height / 2.0}} 0 0 0</pose>
       <visual name="dock_visual">
+        <plugin name="kobukidockvis" filename="librobot_dock_vis.so" />
         <geometry>
           <box>
             <size>{{ dock_width }} {{dock_length}} {{dock_height}}</size>
@@ -53,11 +26,5 @@
         </geometry>
       </collision>
     </link>
-    {{ vizbox("near_center", c_width, near_dist,  0, 1,   1,   0) }}
-    {{ vizbox("far_center",  c_width, far_dist,   0, 0.5, 0.5, 0) }}
-    {{ vizbox("near_left",   s_width, near_dist, -1, 1,   0,   0) }}
-    {{ vizbox("far_left",    s_width, far_dist,  -1, 0.5, 0,   0)}}
-    {{ vizbox("near_right",  s_width, near_dist,  1, 0,   1,   0) }}
-    {{ vizbox("far_right",   s_width, far_dist,   1, 0,   0.5, 0) }}
   </model>
 </sdf>
