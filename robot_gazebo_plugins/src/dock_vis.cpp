@@ -32,6 +32,12 @@ public:
   {
     std::unique_lock<std::mutex> lock(vislock_);
     auto gpose = gazebo_ros::Convert<ignition::math::Pose3d>(msg->pose);
+    {
+      // Arrow visual points to Z, but sensors point to X. Rotate around Y to move Z to X.
+      ignition::math::Quaterniond rot{};
+      rot.Axis(gpose.Rot().YAxis(), M_PI / 2.0);
+      gpose.Rot() = rot * gpose.Rot();
+    }
     if (msg->header.frame_id == "ir_left") {
       left_pose_ = gpose;
     } else if (msg->header.frame_id == "ir_center") {
