@@ -13,14 +13,14 @@
         <plugin name="kobukidockvis" filename="librobot_dock_vis.so" />
         <geometry>
           <box>
-            <size>0.205 0.105 0.075</size>
+            <size>0.105 0.205 0.075</size>
           </box>
         </geometry>
       </visual>
       <collision name="dock_collision">
         <geometry>
           <box>
-            <size>0.205 0.105 0.075</size>
+            <size>0.105 0.205 0.075</size>
           </box>
         </geometry>
       </collision>

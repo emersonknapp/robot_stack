@@ -14,7 +14,7 @@
     </include>
     <include>
       <uri>model://kobuki_dock</uri>
-      <pose>3 0 0 0 0 0</pose>
+      <pose>2.0 -0.5 0 0 0 3.14</pose>
     </include>
 
     <plugin name="kobukidock" filename="librobot_dock_ir.so" />

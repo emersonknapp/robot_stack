@@ -69,31 +69,31 @@ uint8_t evaluatePose(const ignition::math::Pose3d & pose)
 
   uint8_t out = 0;
   auto pos = pose.Pos();
-  if (pos.Y() < 0) {
+  if (pos.X() < 0) {
     return 0;
   }
-  if (pos.X() > s_offset && pos.X() < s_max) {
-    if (pos.Y() < near_dist) {
-      out |= DockInfraRed::NEAR_RIGHT;
-    }
-    if (pos.Y() < far_dist) {
-      out |= DockInfraRed::FAR_RIGHT;
-    }
-  }
-  if (pos.X() < s_offset && pos.X() > -s_offset) {
-    if (pos.Y() < near_dist) {
-      out |= DockInfraRed::NEAR_CENTER;
-    }
-    if (pos.Y() < far_dist) {
-      out |= DockInfraRed::FAR_CENTER;
-    }
-  }
-  if (pos.X() < -s_offset && pos.X() > -s_max) {
-    if (pos.Y() < near_dist) {
+  if (pos.Y() > s_offset && pos.Y() < s_max) {
+    if (pos.X() < near_dist) {
       out |= DockInfraRed::NEAR_LEFT;
     }
     if (pos.Y() < far_dist) {
       out |= DockInfraRed::FAR_LEFT;
+    }
+  }
+  if (pos.Y() < s_offset && pos.Y() > -s_offset) {
+    if (pos.X() < near_dist) {
+      out |= DockInfraRed::NEAR_CENTER;
+    }
+    if (pos.X() < far_dist) {
+      out |= DockInfraRed::FAR_CENTER;
+    }
+  }
+  if (pos.Y() < -s_offset && pos.Y() > -s_max) {
+    if (pos.X() < near_dist) {
+      out |= DockInfraRed::NEAR_RIGHT;
+    }
+    if (pos.X() < far_dist) {
+      out |= DockInfraRed::FAR_RIGHT;
     }
   }
   return out;
