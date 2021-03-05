@@ -68,7 +68,14 @@ uint8_t evaluatePose(const ignition::math::Pose3d & pose)
   const double s_max = s_width + s_offset;
 
   uint8_t out = 0;
-  auto pos = pose.Pos();
+  const auto pos = pose.Pos();
+  const auto rot = pose.Rot();
+
+  // "sorta facing the dock"
+  if (abs(rot.Yaw()) < M_PI / 1.5) {
+    return 0;
+  }
+  // behind the dock
   if (pos.X() < 0) {
     return 0;
   }
