@@ -3,30 +3,11 @@
   <xacro:include filename="$(find turtlebot_description)/urdf/turtlebot_common_library.urdf.xacro" />
   <xacro:include filename="$(find kobuki_description)/urdf/kobuki.urdf.xacro" />
   <xacro:include filename="$(find turtlebot_description)/urdf/stacks/hexagons.urdf.xacro"/>
+  <xacro:include filename="$(find robot_runtime)/urdf/homey_gazebo.urdf.xacro"/>
 
   <xacro:kobuki/>
   <xacro:stack_hexagons parent="base_link"/>
-  <gazebo reference="ir_receiver_center_joint">
-    <preserveFixedJoint>true</preserveFixedJoint>
-  </gazebo>
-  <gazebo reference="ir_receiver_right_joint">
-    <preserveFixedJoint>true</preserveFixedJoint>
-  </gazebo>
-  <gazebo reference="ir_receiver_left_joint">
-    <preserveFixedJoint>true</preserveFixedJoint>
-  </gazebo>
-  <gazebo reference="cliff_sensor_front_joint">
-    <preserveFixedJoint>true</preserveFixedJoint>
-  </gazebo>
-  <gazebo reference="cliff_sensor_right_joint">
-    <preserveFixedJoint>true</preserveFixedJoint>
-  </gazebo>
-  <gazebo reference="cliff_sensor_left_joint">
-    <preserveFixedJoint>true</preserveFixedJoint>
-  </gazebo>
-  <gazebo reference="gyro_joint">
-    <preserveFixedJoint>true</preserveFixedJoint>
-  </gazebo>
+  <xacro:homey_sim/>
 
   <joint name="laser_joint" type="fixed">
     <parent link="base_link"/>
@@ -56,43 +37,4 @@
       <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
     </inertial>
   </link>
-
-  <gazebo reference="laser_joint">
-    <preserveFixedJoint>true</preserveFixedJoint>
-  </gazebo>
-  <gazebo reference="laser_link">
-    <sensor type="ray" name="laser">
-      <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_ray_sensor.so">
-        <ros>
-          <remapping>~/out:=scan</remapping>
-        </ros>
-        <output_type>sensor_msgs/LaserScan</output_type>
-        <frame_name>laser_link</frame_name>
-      </plugin>
-
-      <always_on>true</always_on>
-      <update_rate>5</update_rate>
-      <visualize>true</visualize>
-      <ray>
-        <scan>
-          <horizontal>
-            <samples>360</samples>
-            <resolution>1</resolution>
-            <min_angle>${-M_PI}</min_angle>
-            <max_angle>${M_PI}</max_angle>
-          </horizontal>
-        </scan>
-        <range>
-          <min>0.2</min>
-          <max>3.5</max>
-          <resolution>1</resolution>
-        </range>
-        <noise>
-          <type>gaussian</type>
-          <mean>0.0</mean>
-          <stddev>0.0</stddev>
-        </noise>
-      </ray>
-    </sensor>
-  </gazebo>
 </robot>
