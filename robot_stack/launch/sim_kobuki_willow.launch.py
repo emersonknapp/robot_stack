@@ -15,11 +15,12 @@
 from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
-    ExecuteProcess,
     GroupAction,
 )
+from launch.conditions import IfCondition
+from launch.substitutions import LaunchConfiguration
 from launch_candy import (
-    # include_launch,
+    include_launch,
     pkg_share,
     render_xacro,
 )
@@ -37,42 +38,36 @@ def pkg_install(package_name):
 def generate_launch_description():
     world = str(pkg_share('robot_stack') / 'worlds' / 'willow.world')
 
-    model_path = ':'.join([str(p) for p in [
-        # for misc sensors
-        pkg_install('robot_runtime'),
-        # for kobuki mobile base
-        pkg_install('kobuki_description'),
-        # for stacked plates
-        pkg_install('turtlebot_description'),
-        pkg_share('robot_stack') / 'models',
-    ]])
-    print(model_path)
     xacro_path = str(pkg_share('robot_runtime') / 'urdf' / 'homey.urdf.xacro')
     urdf_file = render_xacro(xacro_path)
 
     map_path = str(pkg_share('robot_stack') / 'maps' / 'willow-partial0.yaml')
-    ns = '/simulation'
+    # ns = '/simulation'
+    ns = ''
 
     return LaunchDescription([
         DeclareLaunchArgument('slam', default_value='true'),
         DeclareLaunchArgument('nav', default_value='false'),
         DeclareLaunchArgument('base', default_value='kobuki'),
-        DeclareLaunchArgument('viz', default_value='true'),
+        DeclareLaunchArgument('viz', default_value='false'),
         SetRemap(f'{ns}/cmd_vel', '/cmd_vel'),
         SetRemap(f'{ns}/odom', '/odom'),
         SetRemap(f'{ns}/scan', '/scan'),
 
-        ExecuteProcess(
-            cmd=[
-                'gazebo', '--verbose', world,
-                '-s', 'libgazebo_ros_init.so',
-                '-s', 'libgazebo_ros_factory.so',
-            ],
-            additional_env={
-                'GAZEBO_MODEL_PATH': [model_path],
-            },
-            output='screen',
-        ),
+        include_launch(
+            'gazebo_ros', 'gazebo.launch.py',
+            launch_arguments={
+                'world': world,
+                'verbose': 'true',
+            }.items()),
+        Node(
+            package='rviz2',
+            executable='rviz2',
+            name='viz',
+            condition=IfCondition(LaunchConfiguration('viz')),
+            arguments=[
+                '-d', str(pkg_share('robot_stack') / 'config' / 'homey.rviz'),
+            ]),
         GroupAction([
             PushRosNamespace(ns),
             Node(
@@ -84,14 +79,8 @@ def generate_launch_description():
                     '-file', urdf_file.name,
                     '-entity', 'homey',
                     '-robot_namespace', ns,
+                    '-spawn_service_timeout', '120',
                 ],
-            ),
-            Node(
-                package='tf2_ros',
-                executable='static_transform_publisher',
-                name='dock_position',
-                output='screen',
-                arguments=['0', '2', '0', '0', '0', '0', 'map', 'kobuki_dock']
             ),
             Node(
                 package='tf2_ros',
@@ -101,13 +90,18 @@ def generate_launch_description():
                 arguments=['0', '0', '0', '0', '0', '0', 'map', 'odom']
             ),
         ]),
-        # include_launch(
-        #     'robot_runtime', 'robot_runtime.launch.py',
-        #     launch_arguments={
-        #         'use_sim_time': 'true',
-        #         'base_driver': 'false',
-        #         # 'slam': 'true',
-        #         'nav': 'true',
-        #         'map_path': map_path
-        #     }.items())
+        include_launch(
+            'robot_runtime', 'robot_runtime.launch.py',
+            launch_arguments={
+                'use_sim_time': 'true',
+                'base_driver': 'false',
+                # 'slam': 'true',
+                'nav': 'false',
+                'map_path': map_path
+            }.items()),
+        Node(
+            package='kobuki_auto_docking',
+            executable='kobuki_sensor_state_agg_node',
+            name='kobuki_sensor_agg',
+        ),
     ])
