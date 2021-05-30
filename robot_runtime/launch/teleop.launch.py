@@ -35,7 +35,7 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time', default_value='false'),
         DeclareLaunchArgument('cmd_topic', default_value='/commands/velocity'),
-        DeclareLaunchArgument('joy_config', default_value='teleop_xbox.config.yaml'),
+        DeclareLaunchArgument('joy_config', default_value='teleop_8bitdo.yml'),
         # Base
         # Teleop
         Node(

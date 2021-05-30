@@ -15,10 +15,11 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import GroupAction
+from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration
 from launch_candy import include_launch
 from launch_ros.actions import Node
-from launch_ros.actions import PushRosNamespace
+# from launch_ros.actions import PushRosNamespace
 
 
 def generate_launch_description():
@@ -28,41 +29,46 @@ def generate_launch_description():
     base_device = LaunchConfiguration('base_device')
 
     return LaunchDescription([
-        DeclareLaunchArgument('base_driver', default_value='false'),
+        DeclareLaunchArgument('base_driver', default_value='true'),
         DeclareLaunchArgument('base_device', default_value='/dev/ttyUSB0'),
         DeclareLaunchArgument('slam', default_value='false'),
         DeclareLaunchArgument('nav', default_value='false'),
         DeclareLaunchArgument('use_sim_time', default_value='false'),
-        DeclareLaunchArgument('map_path'),
+        # DeclareLaunchArgument('map_path'),
         # Base
         # -- Kobuki Base
-        include_launch(
-            'hls_lfcd_lds_driver', 'hlds_laser.launch.py', cond='base_driver',
-            launch_arguments={
-                'port': '/dev/lds01',
-                'frame_id': 'laser_link',
-                'use_sim_time': use_sim_time,
-            }.items()),
+        GroupAction(
+            [
+                include_launch(
+                    'hls_lfcd_lds_driver', 'hlds_laser.launch.py',
+                    launch_arguments={
+                        'port': '/dev/lds01',
+                        'frame_id': 'laser_link',
+                        'use_sim_time': use_sim_time,
+                    }.items()),
+                Node(
+                    package='kobuki_node',
+                    executable='kobuki_ros_node',
+                    name='kobuki_node',
+                    parameters=[standard_params, {
+                        'device_port': base_device,
+                    }],
+                    output='screen'),
+            ],
+            condition=IfCondition(LaunchConfiguration('base_driver')),
+        ),
+
         include_launch(
             'robot_runtime', 'description.launch.py',
             launch_arguments={
                 **standard_params,
                 'joint_states': base_driver,
             }.items()),
-        Node(
-            package='kobuki_node',
-            executable='kobuki_ros_node',
-            name='kobuki_node',
-            parameters=[standard_params, {
-                'device_port': base_device,
-            }],
-            condition=base_driver,
-            output='screen',
-        ),
         include_launch(
             'robot_runtime', 'teleop.launch.py',
             launch_arguments={
                 'use_sim_time': use_sim_time,
+                'cmd_topic': '/cmd_vel',
             }.items()),
         # Node(
         #     package='prometheus_exporter',
