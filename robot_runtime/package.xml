@@ -16,6 +16,7 @@
   <exec_depend>kobuki_node</exec_depend>
   <exec_depend>kobuki_description</exec_depend>
   <exec_depend>turtlebot_description</exec_depend>
+  <exec_depend>kobuki_auto_docking</exec_depend>
 
   <!-- Driver loadout on base -->
   <exec_depend>hls_lfcd_lds_driver</exec_depend>
@@ -48,5 +49,6 @@
 
   <export>
     <build_type>ament_cmake</build_type>
+    <gazebo_ros gazebo_model_path="${prefix}/.." />
   </export>
 </package>
